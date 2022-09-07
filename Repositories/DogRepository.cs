@@ -12,25 +12,30 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
+        public bool CreateDog( Dog dog)
+        {
+            _context.Add(dog);
+            return Save();
+        }
+
+        public bool DeleteDog(Dog dog)
+        {
+            _context.Remove(dog);
+            return Save();
+        }
+
         public bool DogExists(int dogId)
         {
             return _context.Dogs.Any(d => d.Id == dogId);
         }
 
-        public bool DogExistsByName(string dogName)
-        {
-            return _context.Dogs.Any(d => d.Name == dogName);
-        }
 
         public Dog GetDog(int id)
         {
             return _context.Dogs.Where(d => d.Id == id).FirstOrDefault();
         }
 
-        public Dog GetDogByName(string name)
-        {
-            return _context.Dogs.Where(d => d.Name == name).FirstOrDefault();
-        }
+    
 
         public ICollection<Dog> GetDogs()
         {
@@ -41,6 +46,13 @@ namespace RealPetApi.Repositories
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        
+        public bool UpdateDog(Dog dog)
+        {
+            _context.Update(dog);
+            return Save();
         }
     }
 }

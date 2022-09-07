@@ -5,24 +5,21 @@ namespace RealPetApi.Data
 {
     public interface IHandlerRepository
     {
-        //Get
+    
         ICollection<Handler> GetHandlers();
+
         Handler GetHandler(int id);
+
         ICollection<Dog> GetDogsByHandler(int handlerId);
 
-        //Post
+        bool CreateHandler(Handler handler);
 
+        bool UpdateHandler(Handler handler);
 
-
-
-        //Update
-
-
-
-
-        //Delete
+        bool DeleteHandler(Handler handler);
 
         bool HandlerExists(int id);
+
         bool Save();
 
 

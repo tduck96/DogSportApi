@@ -12,6 +12,18 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
+        public bool CreateHandler( Handler handler)
+        {
+            _context.Add(handler);
+            return Save();
+        }
+
+        public bool DeleteHandler(Handler handler)
+        {
+            _context.Remove(handler);
+            return Save();
+        }
+
         public ICollection<Dog> GetDogsByHandler(int handlerId)
         {
             return _context.Dogs.Where(d => handlerId == handlerId).ToList();
@@ -36,6 +48,14 @@ namespace RealPetApi.Repositories
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+
+        public bool UpdateHandler(Handler handler)
+        {
+            _context.Update(handler);
+            return Save();
+
         }
     }
 }

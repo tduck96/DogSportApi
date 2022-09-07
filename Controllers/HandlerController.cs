@@ -13,12 +13,15 @@ namespace RealPetApi.Controllers
     {
         private readonly IHandlerRepository _handlerRepository;
         private readonly IMapper _mapper;
+        private readonly ILocationRepository _locationRepository;
 
         public HandlerController(IHandlerRepository handlerRepository,
-         IMapper mapper)
+         IMapper mapper,
+         ILocationRepository locationRepository)
         {
             _handlerRepository = handlerRepository;
             _mapper = mapper;
+           _locationRepository = locationRepository;
         }
 
         [HttpGet]
@@ -69,6 +72,97 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
             return Ok(dogs);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+
+        public IActionResult CreateHandler([FromQuery] int locationId,
+            [FromBody] HandlerDto handlerCreate)
+        {
+            if (handlerCreate == null)
+                return BadRequest(ModelState);
+
+            var handler = _handlerRepository.GetHandlers()
+                 .Where(b => b.Name.Trim().ToUpper() == handlerCreate.Name.TrimEnd().ToUpper())
+                 .FirstOrDefault();
+
+            if (handler != null)
+            {
+                ModelState.AddModelError("", "Breed already exits.");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var handlerMap = _mapper.Map<Handler>(handlerCreate);
+
+
+            handlerMap.Location = _locationRepository.GetLocation(locationId);
+           
+
+
+            if (!_handlerRepository.CreateHandler(handlerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong with save");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Sucessfully added new handler to records");
+        }
+
+        [HttpPut("{handlerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateDog(int handlerId, [FromBody] HandlerDto updatedHandler)
+        {
+            if (updatedHandler == null)
+                return BadRequest(ModelState);
+
+            if (handlerId != updatedHandler.Id)
+                return BadRequest(ModelState);
+
+            if (!_handlerRepository.HandlerExists(handlerId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var handlerMap = _mapper.Map<Handler>(updatedHandler);
+
+            if (!_handlerRepository.UpdateHandler(handlerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating record");
+                return StatusCode(500, ModelState);
+
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{handlerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public IActionResult DeleteHandler(int handlerId)
+        {
+            if (!_handlerRepository.HandlerExists(handlerId))
+            {
+                return NotFound();
+            }
+
+            var handlerToDelete = _handlerRepository.GetHandler(handlerId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_handlerRepository.DeleteHandler(handlerToDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting category");
+
+            }
+            return NoContent();
         }
     }
 }

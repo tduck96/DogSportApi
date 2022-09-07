@@ -3,9 +3,8 @@ namespace RealPetApi.Dtos
 {
     public class LocationDto
     {
-        public LocationDto()
-        {
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
 

@@ -18,6 +18,19 @@ namespace RealPetApi.Repositories
             return _context.Clubs.Any(c => c.Id == id);
         }
 
+
+        public bool CreateClub(Club club)
+        {
+            _context.Add(club);
+            return Save();
+        }
+
+        public bool DeleteClub(Club club)
+        {
+            _context.Remove(club);
+            return Save();
+        }
+
         public Club GetClub(int id)
         {
             return _context.Clubs.Where(c => c.Id == id).FirstOrDefault();
@@ -37,6 +50,14 @@ namespace RealPetApi.Repositories
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+      
+
+        public bool UpdateClub(Club club)
+        {
+            _context.Update(club);
+            return Save();
         }
     }
 }

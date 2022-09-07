@@ -19,6 +19,18 @@ namespace RealPetApi.Repositories
             return _context.Breeds.Any(b => b.Id == id);
         }
 
+        public bool CreateBreed(Breed breed)
+        {
+            _context.Add(breed);
+            return Save();
+        }
+
+        public bool DeleteBreed(Breed breed)
+        {
+            _context.Remove(breed);
+            return Save();
+        }
+
         public Breed GetBreed(int id)
         {
             return _context.Breeds.Where(b => b.Id == id).FirstOrDefault();
@@ -40,6 +52,11 @@ namespace RealPetApi.Repositories
             return saved > 0 ? true : false;
         }
 
+        public bool UpdateBreed(Breed breed)
+        {
+            _context.Update(breed);
+            return Save();
+        }
     }
 }
 

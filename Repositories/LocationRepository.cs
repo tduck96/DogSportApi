@@ -12,6 +12,18 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
+        public bool CreateLocation(Location location)
+        {
+            _context.Add(location);
+            return Save();
+        }
+
+        public bool DeleteLocation(Location location)
+        {
+            _context.Remove(location);
+            return Save();
+        }
+
         public ICollection<Club> GetClubsByLocation(int locationId)
         {
             return _context.Clubs.Where(c => c.LocationId == locationId).ToList();
@@ -36,6 +48,12 @@ namespace RealPetApi.Repositories
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateLocation(Location location)
+        {
+            _context.Update(location);
+             return Save();
         }
     }
 }

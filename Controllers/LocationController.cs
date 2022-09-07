@@ -69,6 +69,94 @@ namespace RealPetApi.Controllers
 
             return Ok(clubs);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+
+        public IActionResult CreateLocation(
+           [FromBody] LocationDto locationCreate)
+        {
+            if (locationCreate == null)
+                return BadRequest(ModelState);
+
+            var location = _locationRepository.GetLocations()
+                 .Where(b => b.Name.Trim().ToUpper() == locationCreate.Name.TrimEnd().ToUpper())
+                 .FirstOrDefault();
+
+            if (location!= null)
+            {
+                ModelState.AddModelError("", "Breed already exits.");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var locationMap = _mapper.Map<Location>(locationCreate);
+
+
+
+            if (!_locationRepository.CreateLocation(locationMap))
+            {
+                ModelState.AddModelError("", "Something went wrong with save");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("Sucessfully added new location to records");
+        }
+
+        [HttpPut("{locationId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateLocation(int locationId, [FromBody] LocationDto updatedLocation)
+        {
+            if (updatedLocation == null)
+                return BadRequest(ModelState);
+
+            if (locationId != updatedLocation.Id)
+                return BadRequest(ModelState);
+
+            if (!_locationRepository.LocationExists(locationId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var locationMap = _mapper.Map<Location>(updatedLocation);
+
+            if (!_locationRepository.UpdateLocation(locationMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating record");
+                return StatusCode(500, ModelState);
+
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{locationId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public IActionResult DeleteBreed(int locationId)
+        {
+            if (!_locationRepository.LocationExists(locationId))
+            {
+                return NotFound();
+            }
+
+            var locationToDelete = _locationRepository.GetLocation(locationId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_locationRepository.DeleteLocation(locationToDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting category");
+
+            }
+            return NoContent();
+        }
     }
 }
 

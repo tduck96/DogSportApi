@@ -47,6 +47,24 @@ namespace RealPetApi.Repositories
         {
             return _context.DogSports.Where(s => s.SportId == sportId).Select(s => s.Dog).ToList();
         }
+
+        public bool CreateSport(Sport sport)
+        {
+            _context.Add(sport);
+            return Save();
+        }
+
+        public bool UpdateSport(Sport sport)
+        {
+            _context.Update(sport);
+            return Save();
+        }
+
+        public bool DeleteSport(Sport sport)
+        {
+            _context.Remove(sport);
+            return Save();
+        }
     }
 }
 
