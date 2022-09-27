@@ -23,6 +23,36 @@ namespace RealPetApi.Controllers
             var response = await _authService.RegisterUser(request);
             return Ok(response);
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<Handler>> LoginUser(AuthHandlerDto request)
+        {
+            var response = await _authService.LoginUser(request);
+            if (response.Success)
+                return Ok(response);
+
+            return BadRequest(response.Message);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken()
+        {
+            var response = await _authService.RefreshToken();
+            if (response.Success)
+                return Ok(response);
+
+            return BadRequest(response.Message);
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult<string>> LogoutUser()
+        {
+            var response = await _authService.LogoutUser();
+            if (response.Success)
+                return Ok(response);
+
+            return BadRequest(response.Message);
+        }
     }
 }
 
