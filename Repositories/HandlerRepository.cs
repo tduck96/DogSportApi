@@ -26,7 +26,7 @@ namespace RealPetApi.Repositories
 
         public ICollection<Dog> GetDogsByHandler(int handlerId)
         {
-            return _context.Dogs.Where(d => handlerId == handlerId).ToList();
+            return _context.Dogs.Where(d => d.HandlerId == handlerId).ToList();
         }
 
         public Handler GetHandler(int id)

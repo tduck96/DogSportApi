@@ -2,6 +2,7 @@
 global using RealPetApi.Data;
 global using RealPetApi.Interfaces;
 using RealPetApi.Repositories;
+using RealPetApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddScoped<IDogRepository, DogRepository>();
 builder.Services.AddScoped<IHandlerRepository, HandlerRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ISportRepository, SportRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 
 
