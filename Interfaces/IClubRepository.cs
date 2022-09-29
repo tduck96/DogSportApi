@@ -1,25 +1,26 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Interfaces
 {
     public interface IClubRepository
     {
-        ICollection<Club> GetClubs();
+        Task<IEnumerable<Club>> GetClubs();
 
-        Club GetClub(int id);
+        Task<Club> GetClub(int id);
 
         ICollection<Sport> GetSportsByClub(int clubId);
 
-        bool CreateClub(Club club);
+        Task<bool> CreateClub(Club clubToCreate);
 
-        bool UpdateClub(Club club);
+        Task<bool> UpdateClub(Club clubToUpdate);
 
-        bool DeleteClub(Club club);
+        Task<bool> DeleteClub(int clubId);
 
         bool ClubExists(int id);
 
-        bool Save();
+       Task<bool> Save();
     }
 }
 

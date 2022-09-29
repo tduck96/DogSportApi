@@ -12,35 +12,10 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
-        public bool CreateDog( Dog dog)
-        {
-            _context.Add(dog);
-            return Save();
-        }
-
-        public bool DeleteDog(Dog dog)
-        {
-            _context.Remove(dog);
-            return Save();
-        }
-
-        public bool DogExists(int dogId)
-        {
-            return _context.Dogs.Any(d => d.Id == dogId);
-        }
-
-
-        public Dog GetDog(int id)
-        {
-            return _context.Dogs.Where(d => d.Id == id).FirstOrDefault();
-        }
 
     
 
-        public ICollection<Dog> GetDogs()
-        {
-            return _context.Dogs.ToList();
-        }
+      
 
         public bool Save()
         {
@@ -48,11 +23,47 @@ namespace RealPetApi.Repositories
             return saved > 0 ? true : false;
         }
 
-        
-        public bool UpdateDog(Dog dog)
+      
+
+        public async Task<bool> CreateDog(Dog dogToCreate)
         {
-            _context.Update(dog);
-            return Save();
+            await _context.Dogs.AddAsync(dogToCreate);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
+        }
+
+        public async Task<Dog> GetDog(int id)
+        {
+            return await _context.Dogs.Where(d => d.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<ICollection<Dog>> GetDogs()
+        {
+            return await _context.Dogs.ToListAsync();
+        }
+
+        public async Task<bool> UpdateDog(Dog dogToUpdate)
+        {
+            _context.Dogs.Update(dogToUpdate);
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
+
+        }
+
+        public async Task<bool> DeleteDog(int dogId)
+        {
+            var dog = await GetDog(dogId);
+
+            _context.Dogs.Remove(dog);
+
+            var deleted = await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public Task<bool> DogExists(int dogId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

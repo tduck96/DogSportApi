@@ -27,32 +27,35 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Handler>))]
 
-        public IActionResult GetHandlers()
+        public async Task<ActionResult<HandlerDto>> GetHandlers()
         {
-            var handlers = _mapper.Map<List<HandlerDto>>(_handlerRepository.GetHandlers());
+            var handlers = await _handlerRepository.GetHandlers();
+
+            var handlersToReturn = _mapper.Map<List<HandlerDto>>(handlers);
 
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(handlers);
+            return Ok(handlersToReturn);
         }
 
         [HttpGet("{handlerId}")]
         [ProducesResponseType(200, Type = typeof(Handler))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetDog(int handlerId)
+        public async Task<ActionResult<HandlerDto>> GetHandler(int handlerId)
         {
-            if (!_handlerRepository.HandlerExists(handlerId))
+            var handler = await _handlerRepository.GetHandler(handlerId);
+
+            if (handler != null)
+            {
+                var handlerToReturn = _mapper.Map<HandlerDto>(handler);
+                return Ok(handlerToReturn);
+            }
                 return NotFound();
-
-            var handler = _mapper.Map<HandlerDto>(_handlerRepository.GetHandler(handlerId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(handler);
+            
+           
         }
 
 
@@ -60,55 +63,33 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(Dog))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetDogsByHandler(int handlerId)
+        public async Task<ActionResult<DogDto>> GetDogsByHandler(int handlerId)
         {
-            if (!_handlerRepository.HandlerExists(handlerId))
-                return NotFound();
+            var dogs = await _handlerRepository.GetDogsByHandler(handlerId);
 
-            var dogs = _mapper.Map<List<DogDto>>(
-                _handlerRepository.GetDogsByHandler(handlerId));
+           
+            var dogsToReturn = _mapper.Map<List<DogDto>>(dogs);
+            return Ok(dogsToReturn);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(dogs);
+            
         }
 
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateHandler([FromQuery] int locationId,
+        public async Task<ActionResult> CreateHandler([FromQuery] int locationId,
             [FromBody] HandlerDto handlerCreate)
         {
-            if (handlerCreate == null)
-                return BadRequest(ModelState);
-
-            var handler = _handlerRepository.GetHandlers()
-                 .Where(b => b.Name.Trim().ToUpper() == handlerCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
-
-            if (handler != null)
-            {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
-            }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var handlerMap = _mapper.Map<Handler>(handlerCreate);
 
 
             handlerMap.Location = _locationRepository.GetLocation(locationId);
-           
+            
 
+            await _handlerRepository.CreateHandler(handlerMap);
 
-            if (!_handlerRepository.CreateHandler(handlerMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
-            }
-            return Ok("Sucessfully added new handler to records");
+            return Ok("Sucessfully added new dog to records");
         }
 
         [HttpPut("{handlerId}")]

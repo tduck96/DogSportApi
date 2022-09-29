@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -12,50 +14,46 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
-        public bool CreateHandler( Handler handler)
+        public async Task<bool>CreateHandler(Handler handlerToCreate)
         {
-            _context.Add(handler);
-            return Save();
+            await _context.Handlers.AddAsync(handlerToCreate);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
+
         }
 
-        public bool DeleteHandler(Handler handler)
+        public async Task<bool> DeleteHandler(int handlerId)
         {
-            _context.Remove(handler);
-            return Save();
+            var handler = await GetHandler(handlerId);
+
+            _context.Handlers.Remove(handler);
+
+            var deleted = await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public ICollection<Dog> GetDogsByHandler(int handlerId)
+        public async Task<ICollection<Dog>> GetDogsByHandler(int handlerId)
         {
-            return _context.Dogs.Where(d => d.HandlerId == handlerId).ToList();
+            var dogs = _context.Dogs.Where(c => c.HandlerId == handlerId);
+            return await dogs.ToListAsync();
         }
 
-        public Handler GetHandler(int id)
+        public async Task<Handler> GetHandler(int id)
         {
-            return _context.Handlers.Where(h => h.Id == id).FirstOrDefault();
+            return await _context.Handlers.FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public ICollection<Handler> GetHandlers()
+        public async Task<ICollection<Handler>> GetHandlers()
         {
-            return _context.Handlers.ToList();
+            return await _context.Handlers.ToListAsync();
         }
 
-        public bool HandlerExists(int id)
+        public async Task<bool> UpdateHandler(Handler handlerToUpdate)
         {
-            return _context.Handlers.Any(h => h.Id == id);
-        }
-
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
-        }
-
-
-        public bool UpdateHandler(Handler handler)
-        {
-            _context.Update(handler);
-            return Save();
-
+            context.Handlers.Update(handlerToUpdate);
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
         }
     }
 }

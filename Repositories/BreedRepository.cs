@@ -1,5 +1,6 @@
 ﻿using System;
 using RealPetApi.Data;
+using RealPetApi.Dtos;
 using RealPetApi.Interfaces;
 using RealPetApi.Models;
 
@@ -19,28 +20,7 @@ namespace RealPetApi.Repositories
             return _context.Breeds.Any(b => b.Id == id);
         }
 
-        public bool CreateBreed(Breed breed)
-        {
-            _context.Add(breed);
-            return Save();
-        }
-
-        public bool DeleteBreed(Breed breed)
-        {
-            _context.Remove(breed);
-            return Save();
-        }
-
-        public Breed GetBreed(int id)
-        {
-            return _context.Breeds.Where(b => b.Id == id).FirstOrDefault();
-        }
-
-        public ICollection<Breed> GetBreeds()
-        {
-            return _context.Breeds.ToList();
-        }
-
+      
         public ICollection<Dog> GetDogsByBreed(int breedId)
         {
             return _context.Dogs.Where(d => d.BreedId == breedId).ToList();
@@ -52,10 +32,49 @@ namespace RealPetApi.Repositories
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateBreed(Breed breed)
+
+        public async Task<IEnumerable<Breed>> GetBreeds()
         {
-            _context.Update(breed);
-            return Save();
+            return await _context.Breeds.ToListAsync();
+        }
+
+        public async Task<bool> CreateBreed(BreedDto breedCreate)
+        {
+
+            var breed = new Breed
+            {
+                Name = breedCreate.Name
+            };
+
+            _context.Breeds.Add(breed);
+
+             var created = await _context.SaveChangesAsync();
+             return created > 0;
+        }
+
+        public async Task<bool> UpdateBreed(Breed breedToUpdate)
+        {
+            _context.Breeds.Update(breedToUpdate);
+
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
+        }
+
+        public async Task<Breed> GetBreed(int id)
+        {
+            return await _context.Breeds.SingleOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<bool> DeleteBreed(int breedId)
+        {
+            var breed = await GetBreed(breedId);
+
+            _context.Breeds.Remove(breed);
+
+            var removed = await _context.SaveChangesAsync();
+
+            return true;
+
         }
     }
 }

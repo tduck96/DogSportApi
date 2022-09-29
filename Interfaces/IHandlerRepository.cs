@@ -6,16 +6,13 @@ namespace RealPetApi.Data
     public interface IHandlerRepository
     {
     
-        ICollection<Handler> GetHandlers();
-        Handler GetHandler(int id);
-        ICollection<Dog> GetDogsByHandler(int handlerId);
-        bool CreateHandler(Handler handler);
-        bool UpdateHandler(Handler handler);
-        bool DeleteHandler(Handler handler);
-        bool HandlerExists(int id);
-        bool Save();
-
-
+        Task<ICollection<Handler>>GetHandlers();
+        Task<Handler> GetHandler(int id);
+        Task<ICollection<Dog>> GetDogsByHandler(int handlerId);
+        Task<bool> CreateHandler(Handler handlerToCreate);
+        Task<bool> UpdateHandler(Handler handlerToUpdate);
+        Task<bool> DeleteHandler(int handlerId);
+        
     }
 }
 

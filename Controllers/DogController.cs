@@ -34,15 +34,16 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Dog>))]
 
-        public IActionResult GetDogs()
+        public async Task<ActionResult<DogDto>> GetDogs()
         {
-            var dogs = _mapper.Map<List<DogDto>>(_dogRepository.GetDogs());
+            var dogs = await _dogRepository.GetDogs();
+            var dogsToReturn = _mapper.Map<List<DogDto>>(dogs);
 
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(dogs);
+            return Ok(dogsToReturn);
         }
 
 
@@ -50,24 +51,23 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(Dog))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetDog(int dogId)
+        public async Task<ActionResult<DogDto>> GetDog(int dogId)
         {
-            if (!_dogRepository.DogExists(dogId))
-                return NotFound();
+            var dog = await _dogRepository.GetDog(dogId);
 
-            var dog = _mapper.Map<DogDto>(_dogRepository.GetDog(dogId));
+            var dogToReturn = _mapper.Map<DogDto>(dog);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(dog);
+            return Ok(dogToReturn);
         }
 
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateDog([FromQuery] int locationId,
+        public async Task <ActionResult> CreateDog([FromQuery] int locationId,
             [FromQuery] int handlerId,
             [FromQuery] int breedId,
             [FromBody] DogDto dogCreate)
@@ -77,15 +77,6 @@ namespace RealPetApi.Controllers
             if (dogCreate == null)
                 return BadRequest(ModelState);
 
-            var dog = _dogRepository.GetDogs()
-                 .Where(b => b.Name.Trim().ToUpper() == dogCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
-
-            if (dog != null)
-            {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
-            }
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -93,15 +84,11 @@ namespace RealPetApi.Controllers
 
 
             dogMap.Location = _locationRepository.GetLocation(locationId);
-            dogMap.Breed = _breedRepository.GetBreed(breedId);
+            dogMap.Breed = await _breedRepository.GetBreed(breedId);
             dogMap.Handler = _handlerRepository.GetHandler(handlerId);
 
+            await _dogRepository.CreateDog(dogMap);
 
-            if (!_dogRepository.CreateDog(dogMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
-            }
             return Ok("Sucessfully added new dog to records");
         }
 
@@ -110,29 +97,23 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateDog(int dogId, [FromBody] DogDto updatedDog)
+            public async Task<ActionResult> UpdateDog(int dogId, [FromBody] DogDto updatedDog)
         {
-            if (updatedDog == null)
-                return BadRequest(ModelState);
-
-            if (dogId != updatedDog.Id)
-                return BadRequest(ModelState);
-
-            if (!_dogRepository.DogExists(dogId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var dogMap = _mapper.Map<Dog>(updatedDog);
-
-            if (!_dogRepository.UpdateDog(dogMap))
+            var dog = new Dog
             {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
+                Id = updatedDog.Id,
+                Name = updatedDog.Name,
+                BreedId = updatedDog.BreedId,
+                HandlerId = updatedDog.Id
+            };
 
-            }
-            return NoContent();
+            var updated= await _dogRepository.UpdateDog(dog);
+
+            if (updated)
+                return Ok("Record Updated");
+            return NotFound();
+           
+
         }
 
         [HttpDelete("{dogId}")]
@@ -140,24 +121,14 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
 
-        public IActionResult DeleteDog(int dogId)
+        public async Task<ActionResult> DeleteDog(int dogId)
         {
-            if (!_dogRepository.DogExists(dogId))
-            {
-                return NotFound();
-            }
+            var deleted = await _dogRepository.DeleteDog(dogId);
+            if (deleted)
+                return Ok("Dog is deleted");
 
-            var dogToDelete = _dogRepository.GetDog(dogId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_dogRepository.DeleteDog(dogToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-            }
-            return NoContent();
+            return NotFound();
+            
         }
 
     }

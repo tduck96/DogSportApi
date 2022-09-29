@@ -26,15 +26,16 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Breed>))]
 
-        public IActionResult GetBreeds()
+        public async Task<ActionResult<BreedDto>> GetBreeds()
         {
-            var breeds = _mapper.Map<List<BreedDto>>(_breedRepository.GetBreeds());
-
+            var breeds = await _breedRepository.GetBreeds();
+            var breedstoReturn = _mapper.Map<List<BreedDto>>(breeds);
+            
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(breeds);
+            return Ok(breedstoReturn);
         }
 
 
@@ -42,66 +43,41 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(Breed))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetBreed(int breedId)
+        public async Task<ActionResult<BreedDto>> GetBreed(int breedId)
         {
-            if (!_breedRepository.BreedExists(breedId))
-                return NotFound();
-
-            var breed = _mapper.Map<BreedDto>(_breedRepository.GetBreed(breedId));
+            var breed = await _breedRepository.GetBreed(breedId);
+            var breedToReturn = _mapper.Map<BreedDto>(breed);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(breed);
+            return Ok(breedToReturn);
+
         }
 
-        [HttpGet("dogs/{breedId}")]
-        [ProducesResponseType(200, Type = typeof(Dog))]
-        [ProducesResponseType(400)]
-
-        public IActionResult GetDogsByBreed(int breedId)
-        {
-            if (!_breedRepository.BreedExists(breedId))
-                return NotFound();
-
-            var dogs = _mapper.Map<List<DogDto>>(
-                _breedRepository.GetDogsByBreed(breedId));
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(dogs);
-        }
+  
 
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateBreed([FromBody] BreedDto breedCreate)
+        public async Task <ActionResult<Breed>> CreateBreed(BreedDto breedCreate)
         {
-            if (breedCreate == null)
-                return BadRequest(ModelState);
+        
+            var newbreed = await _breedRepository.GetBreeds();
 
-            var breed = _breedRepository.GetBreeds()
-                 .Where(b => b.Name.Trim().ToUpper() == breedCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
+            var checkBreed = newbreed?.Where(b => b.Name.Trim().ToUpper() == breedCreate.Name.TrimEnd().ToUpper())
+         .FirstOrDefault();
 
-            if (breed != null)
+            if (checkBreed == null)
             {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
-            }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
-            var breedMap = _mapper.Map<Breed>(breedCreate);
-
-            if (!_breedRepository.CreateBreed(breedMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
+               var breed = await _breedRepository.CreateBreed(breedCreate);
             }
-            return Ok("Sucessfully added new breed to records");
+
+            return Ok("Sucessfully added");
+                
+            
         }
 
 
@@ -110,29 +86,22 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
 
-        public IActionResult UpdateBreed(int breedId, [FromBody] BreedDto updatedBreed)
+        public async Task<ActionResult> UpdateBreed([FromBody] Breed request)
         {
-            if (updatedBreed == null)
-                return BadRequest(ModelState);
+            var userId = request.Id;
 
-            if (breedId != updatedBreed.Id)
-                return BadRequest(ModelState);
-
-            if (!_breedRepository.BreedExists(breedId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var breedMap = _mapper.Map<Breed>(updatedBreed);
-
-            if (!_breedRepository.UpdateBreed(breedMap))
+            var breed = new Breed
             {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
+                Id = userId,
+                Name = request.Name
+            };
 
-            }
-            return NoContent();
+            var updated = await _breedRepository.UpdateBreed(breed);
+
+            if (updated)
+                return Ok();
+
+            return NotFound();
         }
 
 
@@ -141,24 +110,14 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
 
-        public IActionResult DeleteBreed(int breedId)
+        public async Task<ActionResult> DeleteBreed([FromBody] int breedId)
         {
-            if (!_breedRepository.BreedExists(breedId))
-            {
-                return NotFound();
-            }
+            var toDelete = await _breedRepository.DeleteBreed(breedId);
 
-            var breedToDelete = _breedRepository.GetBreed(breedId);
+            if (toDelete == true)
+                return Ok("Successfully Removed");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_breedRepository.DeleteBreed(breedToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-            }
-            return NoContent();
+            return NotFound();
         }
 
     }

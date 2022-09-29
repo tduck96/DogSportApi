@@ -27,32 +27,32 @@ namespace RealPetApi.Data
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Club>))]
 
-        public IActionResult GetClubs()
+        public async Task<ActionResult<ClubDto>> GetClubs()
         {
-            var clubs = _mapper.Map<List<ClubDto>>(_clubRepository.GetClubs());
-
+            var clubs = await _clubRepository.GetClubs();
+            var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(clubs);
+            return Ok(clubsToReturn);
+
+
         }
 
         [HttpGet("{clubId}")]
         [ProducesResponseType(200, Type = typeof(Club))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetBreed(int clubId)
+        public async Task<ActionResult<ClubDto>> GetClub(int clubId)
         {
-            if (!_clubRepository.ClubExists(clubId))
-                return NotFound();
-
-            var club = _mapper.Map<ClubDto>(_clubRepository.GetClub(clubId));
+            var club = await _clubRepository.GetClub(clubId);
+            var clubToReturn = _mapper.Map<ClubDto>(club);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(club);
+            return Ok(clubToReturn);
         }
 
         [HttpGet("sports/{clubId}")]
@@ -77,91 +77,75 @@ namespace RealPetApi.Data
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateClub([FromQuery] int locationId, [FromBody] ClubDto clubCreate)
+        public async Task<ActionResult<Club>> CreateClub([FromQuery] int locationId , [FromBody] ClubDto clubCreate)
         {
             if (clubCreate == null)
                 return BadRequest(ModelState);
 
-            var club = _clubRepository.GetClubs()
-                 .Where(b => b.Name.Trim().ToUpper() == clubCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
+            var club = await _clubRepository.GetClub(clubCreate.Id);
 
             if (club != null)
             {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
+                ModelState.AddModelError("", "Club Already Exists");
+                    return StatusCode(422, ModelState);
             }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var clubMap = _mapper.Map<Club>(clubCreate);
 
-
             clubMap.Location = _locationRepository.GetLocation(locationId);
 
-            if (!_clubRepository.CreateClub(clubMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
-            }
-            return Ok("Sucessfully added new club to records");
+            await _clubRepository.CreateClub(clubMap);
+
+            return Ok("Sucessfully added Club to Records");
+
         }
+
 
         [HttpPut("{clubId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateClub(int clubId, [FromBody] ClubDto updatedClub)
+        public async Task<ActionResult> UpdateClub([FromBody] ClubDto request)
         {
-            if (updatedClub == null)
-                return BadRequest(ModelState);
 
-            if (clubId != updatedClub.Id)
-                return BadRequest(ModelState);
 
-            if (!_clubRepository.ClubExists(clubId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var clubMap = _mapper.Map<Club>(updatedClub);
-
-            if (!_clubRepository.UpdateClub(clubMap))
+            var club = new Club
             {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
+                Id = request.Id,
+                Name = request.Name,
+                LocationId = request.LocationId
+            };
 
-            }
-            return NoContent();
+            var updatedClub = await _clubRepository.UpdateClub(club);
+
+            if (updatedClub)
+                return Ok("Record Updated");
+
+            return NotFound();
         }
 
-        [HttpDelete("{clubId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
 
-        public IActionResult DeleteClub(int clubId)
+           [HttpDelete("{clubId}")]
+           [ProducesResponseType(400)]
+           [ProducesResponseType(204)]
+           [ProducesResponseType(404)]
+
+           public async Task<ActionResult> DeleteClub(int clubId)
         {
-            if (!_clubRepository.ClubExists(clubId))
+            var clubToDelete = await _clubRepository.GetClub(clubId);
+
+            if (clubToDelete != null)
             {
-                return NotFound();
+                await _clubRepository.DeleteClub(clubId);
+                return Ok("Club Removed");
             }
-
-            var clubToDelete = _clubRepository.GetClub(clubId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_clubRepository.DeleteClub(clubToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-            }
-            return NoContent();
+            return NotFound();
+           
         }
 
     }
+
 }
-
-

@@ -5,17 +5,17 @@ namespace RealPetApi.Interfaces
 {
     public interface IDogRepository
     {
-        ICollection<Dog> GetDogs();
+        Task<ICollection<Dog>> GetDogs();
 
-        Dog GetDog(int id);
+        Task<Dog>GetDog(int id);
 
-        bool CreateDog( Dog dog);
+        Task<bool> CreateDog(Dog dogToCreate);
 
-        bool UpdateDog( Dog dog);
+        Task<bool> UpdateDog(Dog dogToUpdate);
 
-        bool DeleteDog(Dog dog);
+        Task<bool> DeleteDog(int dogId);
 
-        bool DogExists(int dogId);
+        Task<bool> DogExists(int dogId);
 
         bool Save();
     }

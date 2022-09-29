@@ -1,4 +1,5 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Interfaces;
 using RealPetApi.Models;
 
@@ -18,46 +19,53 @@ namespace RealPetApi.Repositories
             return _context.Clubs.Any(c => c.Id == id);
         }
 
-
-        public bool CreateClub(Club club)
-        {
-            _context.Add(club);
-            return Save();
-        }
-
-        public bool DeleteClub(Club club)
-        {
-            _context.Remove(club);
-            return Save();
-        }
-
-        public Club GetClub(int id)
-        {
-            return _context.Clubs.Where(c => c.Id == id).FirstOrDefault();
-        }
-
-        public ICollection<Club> GetClubs()
-        {
-            return _context.Clubs.ToList();
-        }
-
         public ICollection<Sport> GetSportsByClub(int clubId)
         {
             return _context.ClubSports.Where(c => c.ClubId == clubId).Select(c => c.Sport).ToList();
         }
 
-        public bool Save()
+        public async Task<bool> Save()
         {
-            var saved = _context.SaveChanges();
+            var saved = await _context.SaveChangesAsync();
             return saved > 0 ? true : false;
         }
 
-      
-
-        public bool UpdateClub(Club club)
+        public async Task<bool> CreateClub(Club clubToCreate)
         {
-            _context.Update(club);
-            return Save();
+            await _context.Clubs.AddAsync(clubToCreate);
+
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
+        }
+
+        public async Task<bool> DeleteClub(int clubId)
+        {
+            var club = await GetClub(clubId);
+
+            _context.Clubs.Remove(club);
+
+            var deleted = await _context.SaveChangesAsync();
+
+            return true; 
+        }
+
+        public async Task<Club> GetClub(int id)
+        {
+            return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Club>> GetClubs()
+        {
+            return await _context.Clubs.ToListAsync();
+        }
+
+        public async  Task<bool> UpdateClub(Club clubToUpdate)
+        {
+            _context.Clubs.Update(clubToUpdate);
+
+            var updated = await _context.SaveChangesAsync();
+
+            return updated > 0;
         }
     }
 }
