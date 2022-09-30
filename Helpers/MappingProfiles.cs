@@ -26,6 +26,9 @@ namespace RealPetApi.Helpers
 
             CreateMap<Sport, SportDto>();
             CreateMap<SportDto, Sport>();
+
+            CreateMap<Handler, AuthResponseDto>();
+            CreateMap<AuthResponseDto, Handler>();
         }
     }
 }

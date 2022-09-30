@@ -54,13 +54,22 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<DogDto>> GetDog(int dogId)
         {
             var dog = await _dogRepository.GetDog(dogId);
-
+            //var handler = await _handlerRepository.GetHandler(dog.HandlerId);
+            //var breed = await _breedRepository.GetBreed(dog.BreedId);
             var dogToReturn = _mapper.Map<DogDto>(dog);
+            //var newdog = new DogDto
+            //{
+            //    Id = dogId,
+            //    Name = dog.Name,
+            //    Handler = handler,
+            //    Breed = breed
 
+            //};
+           
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(dogToReturn);
+            return Ok(dog);
         }
 
         [HttpPost]
@@ -85,7 +94,7 @@ namespace RealPetApi.Controllers
 
             dogMap.Location = _locationRepository.GetLocation(locationId);
             dogMap.Breed = await _breedRepository.GetBreed(breedId);
-            dogMap.Handler = _handlerRepository.GetHandler(handlerId);
+            dogMap.Handler = await _handlerRepository.GetHandler(handlerId);
 
             await _dogRepository.CreateDog(dogMap);
 

@@ -19,10 +19,6 @@ namespace RealPetApi.Repositories
             return _context.Clubs.Any(c => c.Id == id);
         }
 
-        public ICollection<Sport> GetSportsByClub(int clubId)
-        {
-            return _context.ClubSports.Where(c => c.ClubId == clubId).Select(c => c.Sport).ToList();
-        }
 
         public async Task<bool> Save()
         {
@@ -51,6 +47,7 @@ namespace RealPetApi.Repositories
 
         public async Task<Club> GetClub(int id)
         {
+            
             return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -66,6 +63,11 @@ namespace RealPetApi.Repositories
             var updated = await _context.SaveChangesAsync();
 
             return updated > 0;
+        }
+
+        public async Task<List<Sport>> GetSportsByClub(int clubId)
+        {
+            return await _context.ClubSports.Where(e => e.ClubId == clubId).Select(c => c.Sport).ToListAsync();
         }
     }
 }

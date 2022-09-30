@@ -9,7 +9,7 @@ namespace RealPetApi.Models
         public string RefreshToken { get; set; } = string.Empty;
         public int Id { get; set; }
         public DateTime TokenExpires { get; set; }
-        public string Role { get; set; } = "employee";
+        public string Role { get; set; } = "handler";
     }
 }
 

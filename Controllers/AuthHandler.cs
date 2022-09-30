@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
@@ -11,17 +12,24 @@ namespace RealPetApi.Controllers
     public class AuthHandler : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AuthHandler(IAuthService authService)
+        public AuthHandler(IAuthService authService,
+            IMapper mapper)
         {
             _authService = authService;
+            _mapper = mapper;
+            
         }
 
         [HttpPost]
         public async Task<ActionResult<Handler>> RegisterUser(AuthHandlerDto request)
         {
             var response = await _authService.RegisterUser(request);
-            return Ok(response);
+            var responseToSend = _mapper.Map<AuthResponseDto>(response);
+            
+
+            return Ok(responseToSend);
         }
 
         [HttpPost("login")]

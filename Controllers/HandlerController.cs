@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
@@ -14,14 +15,18 @@ namespace RealPetApi.Controllers
         private readonly IHandlerRepository _handlerRepository;
         private readonly IMapper _mapper;
         private readonly ILocationRepository _locationRepository;
+        private readonly IBreedRepository _breedRepository;
 
         public HandlerController(IHandlerRepository handlerRepository,
          IMapper mapper,
-         ILocationRepository locationRepository)
+         ILocationRepository locationRepository,
+         IBreedRepository breedRepository
+         )
         {
             _handlerRepository = handlerRepository;
             _mapper = mapper;
            _locationRepository = locationRepository;
+            _breedRepository = breedRepository;
         }
 
         [HttpGet]
@@ -66,9 +71,9 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<DogDto>> GetDogsByHandler(int handlerId)
         {
             var dogs = await _handlerRepository.GetDogsByHandler(handlerId);
-
            
             var dogsToReturn = _mapper.Map<List<DogDto>>(dogs);
+           
             return Ok(dogsToReturn);
 
             
@@ -92,59 +97,40 @@ namespace RealPetApi.Controllers
             return Ok("Sucessfully added new dog to records");
         }
 
-        [HttpPut("{handlerId}")]
+        [HttpPatch("{handlerId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateDog(int handlerId, [FromBody] HandlerDto updatedHandler)
+        public IActionResult UpdateHandler(int handlerId, [FromBody] HandlerDto updatedHandler)
         {
-            if (updatedHandler == null)
-                return BadRequest(ModelState);
-
-            if (handlerId != updatedHandler.Id)
-                return BadRequest(ModelState);
-
-            if (!_handlerRepository.HandlerExists(handlerId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var handlerMap = _mapper.Map<Handler>(updatedHandler);
-
-            if (!_handlerRepository.UpdateHandler(handlerMap))
-            {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
-
-            }
+       
             return NoContent();
         }
 
-        [HttpDelete("{handlerId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
+        //[HttpDelete("{handlerId}")]
+        //[ProducesResponseType(400)]
+        //[ProducesResponseType(204)]
+        //[ProducesResponseType(404)]
 
-        public IActionResult DeleteHandler(int handlerId)
-        {
-            if (!_handlerRepository.HandlerExists(handlerId))
-            {
-                return NotFound();
-            }
+        //public IActionResult DeleteHandler(int handlerId)
+        //{
+        //    if (!_handlerRepository.HandlerExists(handlerId))
+        //    {
+        //        return NotFound();
+        //    }
 
-            var handlerToDelete = _handlerRepository.GetHandler(handlerId);
+        //    var handlerToDelete = _handlerRepository.GetHandler(handlerId);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            if (!_handlerRepository.DeleteHandler(handlerToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
+        //    if (!_handlerRepository.DeleteHandler(handlerToDelete))
+        //    {
+        //        ModelState.AddModelError("", "Something went wrong deleting category");
 
-            }
-            return NoContent();
-        }
+        //    }
+        //    return NoContent();
+        //}
     }
 }
 

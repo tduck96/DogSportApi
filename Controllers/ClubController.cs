@@ -48,29 +48,32 @@ namespace RealPetApi.Data
         {
             var club = await _clubRepository.GetClub(clubId);
             var clubToReturn = _mapper.Map<ClubDto>(club);
+  
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(clubToReturn);
+            return Ok(club);
         }
 
         [HttpGet("sports/{clubId}")]
         [ProducesResponseType(200, Type = typeof(Sport))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetSportsByClub(int clubId)
+        public async Task<ActionResult<SportDto>> GetSportsByClub(int clubId)
         {
-            if (!_clubRepository.ClubExists(clubId))
+            var club = await _clubRepository.GetClub(clubId);
+            if (club == null)
                 return NotFound();
 
-            var sports = _mapper.Map<List<SportDto>>(
-                _clubRepository.GetSportsByClub(clubId));
+            var sports = await _clubRepository.GetSportsByClub(clubId);
+
+            var sportsToReturn = _mapper.Map<List<SportDto>>(sports);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(sports);
+            return Ok(sportsToReturn);
         }
 
         [HttpPost]

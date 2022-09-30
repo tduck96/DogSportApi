@@ -1,4 +1,8 @@
 ﻿using System;
+using RealPetApi.Data;
+using RealPetApi.Dtos;
+using RealPetApi.Interfaces;
+using System.Security.Cryptography;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -34,7 +38,10 @@ namespace RealPetApi.Repositories
 
         public async Task<Dog> GetDog(int id)
         {
-            return await _context.Dogs.Where(d => d.Id == id).FirstOrDefaultAsync();
+            return await _context.Dogs.Include(x => x.Breed).FirstOrDefaultAsync(x => x.Id == id);
+             
+
+            
         }
 
         public async Task<ICollection<Dog>> GetDogs()

@@ -10,7 +10,7 @@ namespace RealPetApi.Interfaces
 
         Task<Club> GetClub(int id);
 
-        ICollection<Sport> GetSportsByClub(int clubId);
+        Task<List<Sport>> GetSportsByClub(int clubId);
 
         Task<bool> CreateClub(Club clubToCreate);
 

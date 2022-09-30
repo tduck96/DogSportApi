@@ -10,7 +10,7 @@ namespace RealPetApi.Models
         public int HandlerId { get; set; }
 
         public Breed? Breed { get; set; }
-        public int? BreedId { get; set; }
+        public int BreedId { get; set; }
 
         public Location? Location { get; set; }
         public int? LocationId { get; set; }

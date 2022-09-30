@@ -21,61 +21,85 @@ namespace RealPetApi.Services
         {
             _context = context;
             _configuration = configuration;
-           _httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
 
-        public async Task<Handler> RegisterUser(AuthHandlerDto request)
+        public async Task<AuthResponseDto> RegisterUser(AuthHandlerDto request)
         {
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            var user = await _context.Handlers.FirstOrDefaultAsync(h => h.Username == request.Username);
 
-            var handler = new Handler
+            if (user != null)
             {
-                Username = request.Username,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                LocationId = 1
+                return new AuthResponseDto {
+                    Success = false,
+                    Message = "Account already exists with that username"
+
+                };
+            }
+
+            else
+            {
+
+                CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                {
+                    var handler = new Handler
+                    {
+                        Username = request.Username,
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        LocationId = 1
+                    };
+
+
+                    _context.Handlers.Add(handler);
+
+
+                    await _context.SaveChangesAsync();
+
+
+
+                    return new AuthResponseDto
+                    {
+                        Success = true,
+                        Message = "Welcome!"
+                    };
+                }
             };
-
-
-            _context.Handlers.Add(handler);
-            await _context.SaveChangesAsync();
-
-
-            return handler;
         }
 
         public async Task<AuthResponseDto> LoginUser(AuthHandlerDto request)
         {
-        
-                var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-                if (user == null)
-                {
-                    return new AuthResponseDto { Message = "User not found" };
+            var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-                }
-
-                if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    return new AuthResponseDto { Message = "Wrong password" };
-                }
-
-                string token = CreateToken(user);
-                var refreshToken = CreateRefreshToken();
-                await SetRefreshToken(refreshToken, user);
-           
-
-                return new AuthResponseDto
-                {
-                    Success = true,
-                    Token = token,
-                    RefreshToken = refreshToken.Token,
-                    TokenExpires = refreshToken.Expires
-                };
+            if (user == null)
+            {
+                return new AuthResponseDto { Message = "Invalid Username" };
 
             }
+
+            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                return new AuthResponseDto { Message = "Invalid password" };
+            }
+
+            string token = CreateToken(user);
+            var refreshToken = CreateRefreshToken();
+            await SetRefreshToken(refreshToken, user);
+
+
+            return new AuthResponseDto
+            {
+                Success = true,
+                Token = token,
+                RefreshToken = refreshToken.Token,
+                TokenExpires = refreshToken.Expires
+              
+            };
+
+        }
 
         public async Task<AuthResponseDto> RefreshToken()
         {
@@ -127,7 +151,7 @@ namespace RealPetApi.Services
 
         }
 
-       
+
 
 
 
@@ -221,7 +245,7 @@ namespace RealPetApi.Services
                 .Cookies.Delete("refreshToken");
 
             handler.RefreshToken = string.Empty;
-            
+
 
             await _context.SaveChangesAsync();
         }

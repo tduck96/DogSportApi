@@ -1,4 +1,6 @@
 ﻿using System;
+using RealPetApi.Models;
+
 namespace RealPetApi.Dtos
 {
     public class DogDto
@@ -8,7 +10,10 @@ namespace RealPetApi.Dtos
         public int LocationId { get; set; }
         public int HandlerId { get; set; }
         public int BreedId { get; set; }
-        
+        public Breed Breed { get; set; }
+        public Handler Handler { get; set; }
+
+
     }
 }
 

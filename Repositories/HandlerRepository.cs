@@ -35,13 +35,13 @@ namespace RealPetApi.Repositories
 
         public async Task<ICollection<Dog>> GetDogsByHandler(int handlerId)
         {
-            var dogs = _context.Dogs.Where(c => c.HandlerId == handlerId);
-            return await dogs.ToListAsync();
+            return await _context.Dogs.Include(c => c.Breed).Where(c => c.HandlerId == handlerId).ToListAsync();
+            
         }
 
         public async Task<Handler> GetHandler(int id)
         {
-            return await _context.Handlers.FirstOrDefaultAsync(h => h.Id == id);
+            return await _context.Handlers.Include(c => c.Dogs).FirstOrDefaultAsync(h => h.Id == id);
         }
 
         public async Task<ICollection<Handler>> GetHandlers()
@@ -51,7 +51,7 @@ namespace RealPetApi.Repositories
 
         public async Task<bool> UpdateHandler(Handler handlerToUpdate)
         {
-            context.Handlers.Update(handlerToUpdate);
+            _context.Handlers.Update(handlerToUpdate);
             var updated = await _context.SaveChangesAsync();
             return updated > 0;
         }
