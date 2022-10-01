@@ -5,21 +5,20 @@ namespace RealPetApi.Interfaces
 {
     public interface ISportRepository
     {
-        ICollection<Sport> GetSports();
+        Task<ICollection<Sport>> GetSports();
 
-        Sport GetSport(int id);
+        Task<Sport> GetSport(int id);
 
-        ICollection<Handler> GetHandlersBySport(int sportId);
+        Task<ICollection<Handler>> GetHandlersBySport(int sportId);
 
-        ICollection<Dog> GetDogsBySport(int sportId);
+        Task<ICollection<Dog>> GetDogsBySport(int sportId);
 
-        ICollection<Club> GetClubsBySport(int sportId);
+        Task<ICollection<Club>> GetClubsBySport(int sportId);
 
-        bool CreateSport(Sport sport);
-        bool UpdateSport(Sport sport);
-        bool DeleteSport(Sport sport);
-        bool SportExists(int id);
-        bool Save();
+        Task<bool> CreateSport(Sport sportToCreate);
+        Task<bool> UpdateSport(Sport sportToUpdate);
+        Task<bool> DeleteSport(int sportId);
+        
     }
 }
 

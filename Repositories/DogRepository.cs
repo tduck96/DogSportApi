@@ -16,19 +16,6 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
-
-    
-
-      
-
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
-        }
-
-      
-
         public async Task<bool> CreateDog(Dog dogToCreate)
         {
             await _context.Dogs.AddAsync(dogToCreate);
@@ -40,8 +27,6 @@ namespace RealPetApi.Repositories
         {
             return await _context.Dogs.Include(x => x.Breed).FirstOrDefaultAsync(x => x.Id == id);
              
-
-            
         }
 
         public async Task<ICollection<Dog>> GetDogs()
@@ -60,18 +45,12 @@ namespace RealPetApi.Repositories
         public async Task<bool> DeleteDog(int dogId)
         {
             var dog = await GetDog(dogId);
-
             _context.Dogs.Remove(dog);
-
             var deleted = await _context.SaveChangesAsync();
-
             return true;
         }
 
-        public Task<bool> DogExists(int dogId)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
 

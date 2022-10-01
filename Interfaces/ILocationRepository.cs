@@ -5,21 +5,18 @@ namespace RealPetApi.Interfaces
 {
     public interface ILocationRepository
     {
-        ICollection<Location> GetLocations();
+        Task <ICollection<Location>> GetLocations();
 
-        Location GetLocation(int id);
+        Task <Location> GetLocation(int id);
 
-        ICollection<Club> GetClubsByLocation(int locationId);
+        Task <List<Club>> GetClubsByLocation(int locationId);
 
-        bool CreateLocation(Location location);
+        Task<bool> CreateLocation(Location location);
 
-        bool UpdateLocation(Location location);
+        Task<bool> UpdateLocation(Location location);
 
-        bool DeleteLocation(Location location);
+        Task<bool> DeleteLocation(int locationId);
 
-        bool LocationExists(int id);
-
-        bool Save();
     }
 }
 

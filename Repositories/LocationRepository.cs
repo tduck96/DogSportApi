@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -12,48 +13,45 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
-        public bool CreateLocation(Location location)
+        public async Task<bool> CreateLocation(Location locationToCreate)
         {
-            _context.Add(location);
-            return Save();
+            await _context.Locations.AddAsync(locationToCreate);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
         }
 
-        public bool DeleteLocation(Location location)
+        public async Task<bool> DeleteLocation(int locationId)
         {
-            _context.Remove(location);
-            return Save();
+            var location = await GetLocation(locationId);
+            _context.Locations.Remove(location);
+            var deleted = await _context.SaveChangesAsync();
+            return true;
         }
 
-        public ICollection<Club> GetClubsByLocation(int locationId)
+        public async Task<List<Club>> GetClubsByLocation(int locationId)
         {
-            return _context.Clubs.Where(c => c.LocationId == locationId).ToList();
+            return await _context.Clubs.Where(c => c.LocationId == locationId).ToListAsync();
+            
         }
 
-        public Location GetLocation(int id)
+        public async Task<Location> GetLocation(int id)
         {
-            return _context.Locations.Where(l => l.Id == id).FirstOrDefault();
+            return await _context.Locations.FirstOrDefaultAsync(l => l.Id == id);
+            
         }
 
-        public ICollection<Location> GetLocations()
+        public async Task<ICollection<Location>> GetLocations()
         {
-            return _context.Locations.ToList();
+            var LocationList = _context.Locations.ToListAsync();
+
+            return await LocationList;
         }
 
-        public bool LocationExists(int id)
+        public async Task<bool> UpdateLocation(Location locationToUpdate)
         {
-            return _context.Locations.Any(l => l.Id == id);
-        }
-
-        public bool Save()
-        {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
-        }
-
-        public bool UpdateLocation(Location location)
-        {
-            _context.Update(location);
-             return Save();
+            _context.Locations.Update(locationToUpdate);
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
         }
     }
 }

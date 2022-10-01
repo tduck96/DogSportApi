@@ -54,18 +54,8 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<DogDto>> GetDog(int dogId)
         {
             var dog = await _dogRepository.GetDog(dogId);
-            //var handler = await _handlerRepository.GetHandler(dog.HandlerId);
-            //var breed = await _breedRepository.GetBreed(dog.BreedId);
             var dogToReturn = _mapper.Map<DogDto>(dog);
-            //var newdog = new DogDto
-            //{
-            //    Id = dogId,
-            //    Name = dog.Name,
-            //    Handler = handler,
-            //    Breed = breed
-
-            //};
-           
+            
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -76,7 +66,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public async Task <ActionResult> CreateDog([FromQuery] int locationId,
+        public async Task <ActionResult<bool>> CreateDog([FromQuery] int locationId,
             [FromQuery] int handlerId,
             [FromQuery] int breedId,
             [FromBody] DogDto dogCreate)
@@ -92,7 +82,7 @@ namespace RealPetApi.Controllers
             var dogMap = _mapper.Map<Dog>(dogCreate);
 
 
-            dogMap.Location = _locationRepository.GetLocation(locationId);
+            dogMap.Location = await _locationRepository.GetLocation(locationId);
             dogMap.Breed = await _breedRepository.GetBreed(breedId);
             dogMap.Handler = await _handlerRepository.GetHandler(handlerId);
 

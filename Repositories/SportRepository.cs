@@ -12,58 +12,51 @@ namespace RealPetApi.Repositories
             _context = context;
         }
 
-        public ICollection<Club> GetClubsBySport(int sportId)
+        public async Task<ICollection<Sport>> GetSports()
         {
-            return _context.ClubSports.Where(s => s.SportId == sportId).Select(c => c.Club).ToList();
+            return await _context.Sports.ToListAsync();
         }
 
-        public ICollection<Handler> GetHandlersBySport(int sportId)
+        public async Task<Sport> GetSport(int id)
         {
-            return _context.HandlerSports.Where(s => s.SportId == sportId).Select(s => s.Handler).ToList();
+            return await _context.Sports.FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public ICollection<Sport> GetSports()
+        public async Task<ICollection<Handler>> GetHandlersBySport(int sportId)
         {
-            return _context.Sports.ToList();
+           return await _context.HandlerSports.Where(e => e.SportId == sportId).Select(c => c.Handler).ToListAsync();
         }
 
-        public Sport GetSport(int id)
+        public async Task<ICollection<Dog>> GetDogsBySport(int sportId)
         {
-            return _context.Sports.Where(s => s.Id == id).FirstOrDefault();
+            return await _context.DogSports.Where(e => e.SportId == sportId).Select(c => c.Dog).ToListAsync();
         }
 
-        public bool Save()
+        public async Task<ICollection<Club>> GetClubsBySport(int sportId)
         {
-            var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            return await _context.ClubSports.Where(c => c.SportId == sportId).Select(c => c.Club).ToListAsync();
         }
 
-        public bool SportExists(int id)
+        public async Task<bool> CreateSport(Sport sportToCreate)
         {
-            return _context.Sports.Any(s => s.Id == id);
+            await _context.Sports.AddAsync(sportToCreate);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
         }
 
-        public ICollection<Dog> GetDogsBySport(int sportId)
+        public async Task<bool> UpdateSport(Sport sportToUpdate)
         {
-            return _context.DogSports.Where(s => s.SportId == sportId).Select(s => s.Dog).ToList();
+            _context.Sports.Update(sportToUpdate);
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
         }
 
-        public bool CreateSport(Sport sport)
+        public async Task<bool> DeleteSport(int sportId)
         {
-            _context.Add(sport);
-            return Save();
-        }
-
-        public bool UpdateSport(Sport sport)
-        {
-            _context.Update(sport);
-            return Save();
-        }
-
-        public bool DeleteSport(Sport sport)
-        {
-            _context.Remove(sport);
-            return Save();
+            var location = await GetSport(sportId);
+            _context.Sports.Remove(location);
+            var deleted = await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

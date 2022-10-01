@@ -24,83 +24,68 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Location>))]
 
-        public IActionResult GetLocations()
+        public async Task<ActionResult<List<LocationDto>>> GetLocations()
         {
-            var locations = _mapper.Map<List<LocationDto>>(_locationRepository.GetLocations());
-
+            var locations = await _locationRepository.GetLocations();
+            var locationsToReturn = _mapper.Map<List<LocationDto>>(locations);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(locations);
+            return Ok(locationsToReturn);
         }
 
         [HttpGet("{locationId}")]
-        [ProducesResponseType(200, Type = typeof(Handler))]
+        [ProducesResponseType(200, Type = typeof(Location))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetLocation(int locationId)
+        public async Task<ActionResult> GetLocation(int locationId)
         {
-            if (!_locationRepository.LocationExists(locationId))
+            var location = await _locationRepository.GetLocation(locationId);
+            if (location == null)
                 return NotFound();
 
-            var location = _mapper.Map<HandlerDto>(_locationRepository.GetLocation(locationId));
+            var locationToReturn = _mapper.Map<LocationDto>(location);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(location);
+            return Ok(locationToReturn);
         }
 
         [HttpGet("clubs/{locationId}")]
         [ProducesResponseType(200, Type = typeof(Club))]
         [ProducesResponseType(400)]
 
-        public IActionResult GetClubsByLocation(int locationId)
+        public async Task <ActionResult<List<ClubDto>>> GetClubsByLocation(int locationId)
         {
-            if (!_locationRepository.LocationExists(locationId))
-                return NotFound();
-
-            var clubs = _mapper.Map<List<ClubDto>>(
-                _locationRepository.GetClubsByLocation(locationId));
+            var clubs = await _locationRepository.GetClubsByLocation(locationId);
+            if (clubs == null)
+                return NotFound("No clubs currently available in that location");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(clubs);
+            var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
+           
+            return Ok(clubsToReturn);
         }
 
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateLocation(
+        public async Task<ActionResult<bool>> CreateLocation(
            [FromBody] LocationDto locationCreate)
         {
             if (locationCreate == null)
                 return BadRequest(ModelState);
-
-            var location = _locationRepository.GetLocations()
-                 .Where(b => b.Name.Trim().ToUpper() == locationCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
-
-            if (location!= null)
-            {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
-            }
+            
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var locationMap = _mapper.Map<Location>(locationCreate);
 
-
-
-            if (!_locationRepository.CreateLocation(locationMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
-            }
             return Ok("Sucessfully added new location to records");
         }
 
@@ -108,7 +93,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateLocation(int locationId, [FromBody] LocationDto updatedLocation)
+        public async Task<ActionResult<bool>> UpdateLocation(int locationId, [FromBody] LocationDto updatedLocation)
         {
             if (updatedLocation == null)
                 return BadRequest(ModelState);
@@ -116,7 +101,8 @@ namespace RealPetApi.Controllers
             if (locationId != updatedLocation.Id)
                 return BadRequest(ModelState);
 
-            if (!_locationRepository.LocationExists(locationId))
+            var location = await _locationRepository.GetLocation(locationId);
+            if (location == null)
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -124,13 +110,11 @@ namespace RealPetApi.Controllers
 
             var locationMap = _mapper.Map<Location>(updatedLocation);
 
-            if (!_locationRepository.UpdateLocation(locationMap))
-            {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
+            await _locationRepository.UpdateLocation(locationMap);
 
-            }
-            return NoContent();
+            return Ok("Sucessfully updated");
+            
+           
         }
 
         [HttpDelete("{locationId}")]
