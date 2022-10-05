@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
@@ -89,7 +90,7 @@ namespace RealPetApi.Controllers
             var handlerMap = _mapper.Map<Handler>(handlerCreate);
 
 
-            handlerMap.Location = _locationRepository.GetLocation(locationId);
+            handlerMap.Location = await _locationRepository.GetLocation(locationId);
             
 
             await _handlerRepository.CreateHandler(handlerMap);
@@ -101,36 +102,37 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateHandler(int handlerId, [FromBody] HandlerDto updatedHandler)
+        public async Task<ActionResult> UpdateHandler(int handlerId, [FromBody] JsonPatchDocument<Handler> request)
         {
-       
-            return NoContent();
+            var handler = await _handlerRepository.GetHandler(handlerId);
+
+            if (handler == null)
+                return NotFound();
+
+            request.ApplyTo(handler);
+            await _handlerRepository.UpdateHandler(handler);
+
+            return Ok("Handler Updated");
+
+
+
         }
 
-        //[HttpDelete("{handlerId}")]
-        //[ProducesResponseType(400)]
-        //[ProducesResponseType(204)]
-        //[ProducesResponseType(404)]
+        [HttpDelete("{handlerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
 
-        //public IActionResult DeleteHandler(int handlerId)
-        //{
-        //    if (!_handlerRepository.HandlerExists(handlerId))
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<ActionResult<bool>> DeleteHandler(int handlerId)
+        {
+            var deleted = await _handlerRepository.DeleteHandler(handlerId);
+            if (deleted)
+                return Ok("Handler deleted");
 
-        //    var handlerToDelete = _handlerRepository.GetHandler(handlerId);
+          
+                return NotFound();
 
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    if (!_handlerRepository.DeleteHandler(handlerToDelete))
-        //    {
-        //        ModelState.AddModelError("", "Something went wrong deleting category");
-
-        //    }
-        //    return NoContent();
-        //}
+        }
     }
 }
 

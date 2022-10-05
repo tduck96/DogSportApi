@@ -57,7 +57,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(Club))]
         [ProducesResponseType(400)]
 
-        public async Task <ActionResult<List<ClubDto>>> GetClubsByLocation(int locationId)
+        public async Task<ActionResult<List<ClubDto>>> GetClubsByLocation(int locationId)
         {
             var clubs = await _locationRepository.GetClubsByLocation(locationId);
             if (clubs == null)
@@ -67,7 +67,7 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
             var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
-           
+
             return Ok(clubsToReturn);
         }
 
@@ -80,7 +80,7 @@ namespace RealPetApi.Controllers
         {
             if (locationCreate == null)
                 return BadRequest(ModelState);
-            
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -89,58 +89,7 @@ namespace RealPetApi.Controllers
             return Ok("Sucessfully added new location to records");
         }
 
-        [HttpPut("{locationId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public async Task<ActionResult<bool>> UpdateLocation(int locationId, [FromBody] LocationDto updatedLocation)
-        {
-            if (updatedLocation == null)
-                return BadRequest(ModelState);
 
-            if (locationId != updatedLocation.Id)
-                return BadRequest(ModelState);
-
-            var location = await _locationRepository.GetLocation(locationId);
-            if (location == null)
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var locationMap = _mapper.Map<Location>(updatedLocation);
-
-            await _locationRepository.UpdateLocation(locationMap);
-
-            return Ok("Sucessfully updated");
-            
-           
-        }
-
-        [HttpDelete("{locationId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-
-        public IActionResult DeleteBreed(int locationId)
-        {
-            if (!_locationRepository.LocationExists(locationId))
-            {
-                return NotFound();
-            }
-
-            var locationToDelete = _locationRepository.GetLocation(locationId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_locationRepository.DeleteLocation(locationToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-            }
-            return NoContent();
-        }
     }
-}
 
+}

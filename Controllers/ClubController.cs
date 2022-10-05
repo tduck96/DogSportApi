@@ -98,7 +98,7 @@ namespace RealPetApi.Data
 
             var clubMap = _mapper.Map<Club>(clubCreate);
 
-            clubMap.Location = _locationRepository.GetLocation(locationId);
+            clubMap.Location = await _locationRepository.GetLocation(locationId);
 
             await _clubRepository.CreateClub(clubMap);
 

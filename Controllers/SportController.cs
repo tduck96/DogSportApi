@@ -24,175 +24,103 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Sport>))]
 
-        public IActionResult GetSports()
+        public async Task<ActionResult<List<Sport>>> GetSports()
         {
-            var sports = _mapper.Map<List<SportDto>>(_sportRepository.GetSports());
+            //var sports = _mapper.Map<List<SportDto>>(_sportRepository.GetSports());
+            var sports = await _sportRepository.GetSports();
+
+            var sportsToReturn = _mapper.Map<List<SportDto>>(sports);
+
+            return Ok(sportsToReturn);
 
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(sports);
         }
 
-        [HttpGet("{sportId}")]
-        [ProducesResponseType(200, Type = typeof(Sport))]
-        [ProducesResponseType(400)]
+            [HttpGet("{sportId}")]
+            [ProducesResponseType(200, Type = typeof(Sport))]
+            [ProducesResponseType(400)]
 
-        public IActionResult GetSport(int sportId)
-        {
-            if (!_sportRepository.SportExists(sportId))
-                return NotFound();
+            public async Task<ActionResult<SportDto>> GetSport(int sportId)
+            {
+                var sport = await _sportRepository.GetSport(sportId);
+                if (sport == null)
+                    return NotFound();
+    
 
-            var sport = _mapper.Map<SportDto>(_sportRepository.GetSport(sportId));
+                var sportToReturn = _mapper.Map<SportDto>(sport);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            return Ok(sport);
-        }
+                return Ok(sportToReturn);
+            }
 
-        [HttpGet("clubs/{sportId}")]
-        [ProducesResponseType(200, Type = typeof(Club))]
-        [ProducesResponseType(400)]
+            [HttpGet("clubs/{sportId}")]
+            [ProducesResponseType(200, Type = typeof(Club))]
+            [ProducesResponseType(400)]
 
-        public IActionResult GetClubsBySport(int sportId)
-        {
-            if (!_sportRepository.SportExists(sportId))
-                return NotFound();
+            public async Task <ActionResult<List<ClubDto>>> GetClubsBySport(int sportId)
+            {
+                var clubs = await _sportRepository.GetClubsBySport(sportId);
+            
+                 var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
 
-            var clubs = _mapper.Map<List<ClubDto>>(
-                _sportRepository.GetClubsBySport(sportId));
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return Ok(clubsToReturn);
+            }
 
-            return Ok(clubs);
-        }
+            [HttpGet("handlers/{sportId}")]
+            [ProducesResponseType(200, Type = typeof(Handler))]
+            [ProducesResponseType(400)]
 
-        [HttpGet("handlers/{sportId}")]
-        [ProducesResponseType(200, Type = typeof(Handler))]
-        [ProducesResponseType(400)]
+            public async Task<ActionResult<List<HandlerDto>>> GetHandlersBySport(int sportId)
+            {
+                var handlers = await _sportRepository.GetHandlersBySport(sportId);
 
-        public IActionResult GetHandlersBySport(int sportId)
-        {
-            if (!_sportRepository.SportExists(sportId))
-                return NotFound();
+                var handlersToReturn = _mapper.Map<List<HandlerDto>>(handlers);
 
-            var handlers = _mapper.Map<List<HandlerDto>>(
-                _sportRepository.GetHandlersBySport(sportId));
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+               return Ok(handlersToReturn);
+            }
 
-            return Ok(handlers);
-        }
+            [HttpGet("dogs/{sportId}")]
+            [ProducesResponseType(200, Type = typeof(Dog))]
+            [ProducesResponseType(400)]
 
-        [HttpGet("dogs/{sportId}")]
-        [ProducesResponseType(200, Type = typeof(Dog))]
-        [ProducesResponseType(400)]
+            public async Task<ActionResult<List<DogDto>>> GetDogsBySport(int sportId)
+            {
+                var dogs = await _sportRepository.GetDogsBySport(sportId);
 
-        public IActionResult GetDogsBySport(int sportId)
-        {
-            if (!_sportRepository.SportExists(sportId))
-                return NotFound();
+                var dogsToReturn = _mapper.Map<List<DogDto>>(dogs);
 
-            var dogs = _mapper.Map<List<DogDto>>(
-                _sportRepository.GetDogsBySport(sportId));
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return Ok(dogsToReturn);
+            }
 
-            return Ok(dogs);
-        }
+            [HttpPost]
+            [ProducesResponseType(204)]
+            [ProducesResponseType(400)]
 
-        [HttpPost]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-
-        public IActionResult CreateSport(
-         [FromBody] SportDto sportCreate)
-        {
+            public async Task<ActionResult<bool>> CreateSport(
+             [FromBody] SportDto sportCreate)
+            {
             if (sportCreate == null)
                 return BadRequest(ModelState);
 
-            var sport = _sportRepository.GetSports()
-                 .Where(b => b.Name.Trim().ToUpper() == sportCreate.Name.TrimEnd().ToUpper())
-                 .FirstOrDefault();
-
-            if (sport != null)
-            {
-                ModelState.AddModelError("", "Breed already exits.");
-                return StatusCode(422, ModelState);
-            }
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var sportMap = _mapper.Map<Sport>(sportCreate);
+            var sportMap = _mapper.Map<Location>(sportCreate);
 
-
-
-            if (!_sportRepository.CreateSport(sportMap))
-            {
-                ModelState.AddModelError("", "Something went wrong with save");
-                return StatusCode(500, ModelState);
-            }
-            return Ok("Sucessfully added new sport to records");
+            return Ok("Sucessfully added new location to records");
         }
 
-        [HttpPut("{sportId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult UpdateSport(int sportId, [FromBody] SportDto updatedSport)
-        {
-            if (updatedSport == null)
-                return BadRequest(ModelState);
 
-            if (sportId != updatedSport.Id)
-                return BadRequest(ModelState);
-
-            if (!_sportRepository.SportExists(sportId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var sportMap = _mapper.Map<Sport>(updatedSport);
-
-            if (!_sportRepository.UpdateSport(sportMap))
-            {
-                ModelState.AddModelError("", "Something went wrong updating record");
-                return StatusCode(500, ModelState);
-
-            }
-            return NoContent();
-        }
-
-        [HttpDelete("{sportId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-
-        public IActionResult DeleteSport(int sportId)
-        {
-            if (!_sportRepository.SportExists(sportId))
-            {
-                return NotFound();
-            }
-
-            var sportToDelete = _sportRepository.GetSport(sportId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_sportRepository.DeleteSport(sportToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-            }
-            return NoContent();
-        }
     }
 }
-
