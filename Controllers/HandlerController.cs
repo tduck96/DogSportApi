@@ -77,7 +77,6 @@ namespace RealPetApi.Controllers
            
             return Ok(dogsToReturn);
 
-            
         }
 
         [HttpPost]

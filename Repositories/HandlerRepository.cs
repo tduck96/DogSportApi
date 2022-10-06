@@ -33,15 +33,17 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        public async Task<ICollection<Dog>> GetDogsByHandler(int handlerId)
+        public async Task<List<Dog>> GetDogsByHandler(int handlerId)
         {
-            return await _context.Dogs.Include(c => c.Breed).Where(c => c.HandlerId == handlerId).ToListAsync();
+            return await _context.Dogs.Where(c => c.HandlerId == handlerId).ToListAsync();
             
         }
 
         public async Task<Handler> GetHandler(int id)
         {
-            return await _context.Handlers.Include(c => c.Dogs).FirstOrDefaultAsync(h => h.Id == id);
+            return await _context.Handlers
+                .Include(c => c.Dogs)
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
 
         public async Task<ICollection<Handler>> GetHandlers()

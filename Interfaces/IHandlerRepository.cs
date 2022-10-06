@@ -8,7 +8,7 @@ namespace RealPetApi.Data
     
         Task<ICollection<Handler>>GetHandlers();
         Task<Handler> GetHandler(int id);
-        Task<ICollection<Dog>> GetDogsByHandler(int handlerId);
+        Task<List<Dog>> GetDogsByHandler(int handlerId);
         Task<bool> CreateHandler(Handler handlerToCreate);
         Task<bool> UpdateHandler(Handler handlerToUpdate);
         Task<bool> DeleteHandler(int handlerId);

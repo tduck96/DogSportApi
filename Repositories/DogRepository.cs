@@ -25,7 +25,7 @@ namespace RealPetApi.Repositories
 
         public async Task<Dog> GetDog(int id)
         {
-            return await _context.Dogs.Include(x => x.Breed).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Dogs.FirstOrDefaultAsync(x => x.Id == id);
              
         }
 

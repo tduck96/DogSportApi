@@ -29,6 +29,9 @@ namespace RealPetApi.Helpers
 
             CreateMap<Handler, AuthResponseDto>();
             CreateMap<AuthResponseDto, Handler>();
+
+            CreateMap<Handler, HandlerProfileDto>();
+            CreateMap<HandlerProfileDto, Handler>();
         }
     }
 }

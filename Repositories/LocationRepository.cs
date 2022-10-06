@@ -34,6 +34,11 @@ namespace RealPetApi.Repositories
             
         }
 
+        public async Task<List<Handler>> GetHandlersByLocation(int locationId)
+        {
+            return await _context.Handlers.Where(c => c.LocationId == locationId).ToListAsync();
+        }
+
         public async Task<Location> GetLocation(int id)
         {
             return await _context.Locations.FirstOrDefaultAsync(l => l.Id == id);

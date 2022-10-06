@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers()
-.AddNewtonsoftJson();
+builder.Services.AddControllers();
+
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
@@ -23,6 +23,7 @@ builder.Services.AddScoped<IHandlerRepository, HandlerRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ISportRepository, SportRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 

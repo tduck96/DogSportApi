@@ -11,6 +11,8 @@ namespace RealPetApi.Interfaces
 
         Task <List<Club>> GetClubsByLocation(int locationId);
 
+        Task<List<Handler>> GetHandlersByLocation(int locationId);
+
         Task<bool> CreateLocation(Location location);
 
         Task<bool> UpdateLocation(Location location);

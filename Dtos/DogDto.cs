@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Models;
 
 namespace RealPetApi.Dtos
@@ -7,12 +8,8 @@ namespace RealPetApi.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int LocationId { get; set; }
-        public int HandlerId { get; set; }
         public int BreedId { get; set; }
-        public Breed Breed { get; set; }
-        public Handler Handler { get; set; }
-
+        public int LocationId { get; set; }
 
     }
 }
