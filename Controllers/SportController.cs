@@ -24,7 +24,7 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Sport>))]
 
-        public async Task<ActionResult<List<Sport>>> GetSports()
+        public async Task<ActionResult<List<SportDto>>> GetSports()
         {
             //var sports = _mapper.Map<List<SportDto>>(_sportRepository.GetSports());
             var sports = await _sportRepository.GetSports();

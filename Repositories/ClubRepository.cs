@@ -49,6 +49,9 @@ namespace RealPetApi.Repositories
         {
             
             return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);
+            
+
+
         }
 
         public async Task<IEnumerable<Club>> GetClubs()

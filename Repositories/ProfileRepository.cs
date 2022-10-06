@@ -21,9 +21,10 @@ namespace RealPetApi.Repositories
         {
             var Handlers = await _context.Handlers.FirstOrDefaultAsync(c => c.Id == handlerId);
             var Dogs = await _context.Dogs.Where(c => c.HandlerId == handlerId).ToListAsync();
+               
             var Location = await _context.Locations.Where(c => c.Id == Handlers.LocationId).FirstOrDefaultAsync();
 
-            var mappedDogs = _mapper.Map<List<DogDto>>(Dogs);
+            var mappedDogs = _mapper.Map<List<DogDtoForUserProfile>>(Dogs);
             var mappedLocation = _mapper.Map<LocationDto>(Location);
 
 

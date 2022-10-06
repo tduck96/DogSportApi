@@ -1,4 +1,5 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Interfaces
@@ -8,6 +9,8 @@ namespace RealPetApi.Interfaces
         Task<ICollection<Dog>> GetDogs();
 
         Task<Dog>GetDog(int id);
+
+        Task<List<SportDto>> GetSportsByDog(int dogId);
 
         Task<bool> CreateDog(Dog dogToCreate);
 

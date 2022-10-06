@@ -26,7 +26,7 @@ namespace RealPetApi.Repositories
         public async Task<Dog> GetDog(int id)
         {
             return await _context.Dogs.FirstOrDefaultAsync(x => x.Id == id);
-             
+
         }
 
         public async Task<ICollection<Dog>> GetDogs()
@@ -50,7 +50,26 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        
+        public async Task<List<SportDto>> GetSportsByDog(int dogId)
+        {
+            var sports = await _context.DogSports.Where(c => c.DogId == dogId).Select(c => c.Sport).ToListAsync();
+
+            List<SportDto> sportDtos = new List<SportDto>();
+
+            foreach (Sport sport in sports)
+            {
+
+                var dto = new SportDto
+                {
+                    Id = sport.Id,
+                    Name = sport.Name,
+                    PhotoUrl = sport.PhotoUrl,
+                };
+
+                sportDtos.Add(dto);
+            }
+            return sportDtos;
+        }
     }
 }
 

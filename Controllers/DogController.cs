@@ -51,15 +51,26 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(Dog))]
         [ProducesResponseType(400)]
 
-        public async Task<ActionResult<DogDto>> GetDog(int dogId)
+        public async Task<ActionResult<DogProfileDto>> GetDog(int dogId)
         {
             var dog = await _dogRepository.GetDog(dogId);
-            var dogToReturn = _mapper.Map<DogDto>(dog);
-            
+            var breed = await _breedRepository.GetBreed(dog.BreedId);
+            var sports = await _dogRepository.GetSportsByDog(dogId);
+
+            var dogProfileDto = new DogProfileDto
+            {
+                Id = dog.Id,
+                Name = dog.Name,
+                PhotoUrl = dog.PhotoUrl,
+                Weight = dog.Weight,
+                Sports = sports
+            };
+           
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(dog);
+            return Ok(dogProfileDto);
         }
 
         [HttpPost]

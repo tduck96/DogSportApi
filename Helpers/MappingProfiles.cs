@@ -32,6 +32,9 @@ namespace RealPetApi.Helpers
 
             CreateMap<Handler, HandlerProfileDto>();
             CreateMap<HandlerProfileDto, Handler>();
+
+            CreateMap<Dog, DogDtoForUserProfile>();
+            CreateMap<DogDtoForUserProfile, Dog>();
         }
     }
 }

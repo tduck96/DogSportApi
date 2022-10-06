@@ -1,4 +1,5 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Data
@@ -6,7 +7,7 @@ namespace RealPetApi.Data
     public interface IHandlerRepository
     {
     
-        Task<ICollection<Handler>>GetHandlers();
+        Task<List<HandlersListDto>>GetHandlers();
         Task<Handler> GetHandler(int id);
         Task<List<Dog>> GetDogsByHandler(int handlerId);
         Task<bool> CreateHandler(Handler handlerToCreate);

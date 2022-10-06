@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
 
@@ -47,13 +48,23 @@ namespace RealPetApi.Data
         public async Task<ActionResult<ClubDto>> GetClub(int clubId)
         {
             var club = await _clubRepository.GetClub(clubId);
-            var clubToReturn = _mapper.Map<ClubDto>(club);
-  
+            var location = await _locationRepository.GetLocation(club.LocationId);
+
+            var clubDto = new ClubDto
+            {
+                Id = club.Id,
+                Name = club.Name,
+                About = "We are a dog training facility!",
+                Founded = 2015,
+                location = location.Name
+            };
+                
+
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(club);
+            return Ok(clubDto);
         }
 
         [HttpGet("sports/{clubId}")]

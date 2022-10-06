@@ -5,6 +5,11 @@ namespace RealPetApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string PhotoUrl { get; set; } = string.Empty;
+        public int Weight { get; set; }
+        public string About { get; set; } = string.Empty;
+
+
 
         public Handler ? Handler { get; set; }
         public int HandlerId { get; set; }

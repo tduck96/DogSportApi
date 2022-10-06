@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -46,9 +48,28 @@ namespace RealPetApi.Repositories
                 .FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public async Task<ICollection<Handler>> GetHandlers()
+        public async Task<List<HandlersListDto>> GetHandlers()
         {
-            return await _context.Handlers.ToListAsync();
+            var handlers = await _context.Handlers.ToListAsync();
+            List<HandlersListDto> Dtos = new List<HandlersListDto>(); 
+
+            foreach (Handler handler  in handlers)
+            {
+               
+                var location = await _context.Locations.Where(c => c.Id == handler.LocationId).Select(c => c.Name).FirstOrDefaultAsync();
+                
+
+                var dto = new HandlersListDto
+                {
+                Id = handler.Id,
+                Name = handler.Name,
+                PhotoUrl = handler.PhotoUrl,
+                Location = location
+                };
+
+                Dtos.Add(dto);
+            }
+            return Dtos;
         }
 
         public async Task<bool> UpdateHandler(Handler handlerToUpdate)

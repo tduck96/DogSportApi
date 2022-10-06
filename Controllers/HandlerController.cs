@@ -33,17 +33,15 @@ namespace RealPetApi.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Handler>))]
 
-        public async Task<ActionResult<HandlerDto>> GetHandlers()
+        public async Task<ActionResult<List<HandlersListDto>>> GetHandlers()
         {
             var handlers = await _handlerRepository.GetHandlers();
-
-            var handlersToReturn = _mapper.Map<List<HandlerDto>>(handlers);
 
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(handlersToReturn);
+            return Ok(handlers);
         }
 
         [HttpGet("{handlerId}")]
