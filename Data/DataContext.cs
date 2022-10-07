@@ -24,6 +24,9 @@ namespace RealPetApi.Data
         public DbSet<DogSport> DogSports { get; set; }
         public DbSet<Title> Titles { get; set; }
         public DbSet<DogTitle> DogTitles { get; set; }
+        public DbSet<WallPost> Wallposts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
