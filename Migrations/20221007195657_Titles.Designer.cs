@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealPetApi.Data;
 
@@ -11,9 +12,10 @@ using RealPetApi.Data;
 namespace RealPetApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221007195657_Titles")]
+    partial class Titles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,21 +141,6 @@ namespace RealPetApi.Migrations
                     b.HasIndex("SportId");
 
                     b.ToTable("DogSports");
-                });
-
-            modelBuilder.Entity("RealPetApi.Models.DogTitle", b =>
-                {
-                    b.Property<int>("DogId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TitleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DogId", "TitleId");
-
-                    b.HasIndex("TitleId");
-
-                    b.ToTable("DogTitles");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
@@ -356,25 +343,6 @@ namespace RealPetApi.Migrations
                     b.Navigation("Sport");
                 });
 
-            modelBuilder.Entity("RealPetApi.Models.DogTitle", b =>
-                {
-                    b.HasOne("RealPetApi.Models.Dog", "Dog")
-                        .WithMany("DogTitles")
-                        .HasForeignKey("DogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RealPetApi.Models.Title", "Title")
-                        .WithMany("DogTitles")
-                        .HasForeignKey("TitleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dog");
-
-                    b.Navigation("Title");
-                });
-
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
                 {
                     b.HasOne("RealPetApi.Models.Location", "Location")
@@ -418,8 +386,6 @@ namespace RealPetApi.Migrations
             modelBuilder.Entity("RealPetApi.Models.Dog", b =>
                 {
                     b.Navigation("DogSports");
-
-                    b.Navigation("DogTitles");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
@@ -445,11 +411,6 @@ namespace RealPetApi.Migrations
                     b.Navigation("DogSports");
 
                     b.Navigation("HandlerSports");
-                });
-
-            modelBuilder.Entity("RealPetApi.Models.Title", b =>
-                {
-                    b.Navigation("DogTitles");
                 });
 #pragma warning restore 612, 618
         }

@@ -22,6 +22,8 @@ namespace RealPetApi.Data
         public DbSet<ClubSport> ClubSports { get; set; }
         public DbSet<HandlerSport> HandlerSports { get; set; }
         public DbSet<DogSport> DogSports { get; set; }
+        public DbSet<Title> Titles { get; set; }
+        public DbSet<DogTitle> DogTitles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +60,17 @@ namespace RealPetApi.Data
                 .HasOne(p => p.Sport)
                 .WithMany(pc => pc.DogSports)
                 .HasForeignKey(c => c.SportId);
+
+            modelBuilder.Entity<DogTitle>()
+               .HasKey(po => new { po.DogId, po.TitleId });
+            modelBuilder.Entity<DogTitle>()
+                .HasOne(p => p.Dog)
+                .WithMany(pc => pc.DogTitles)
+                .HasForeignKey(p => p.DogId);
+            modelBuilder.Entity<DogTitle>()
+                .HasOne(p => p.Title)
+                .WithMany(pc => pc.DogTitles)
+                .HasForeignKey(c => c.TitleId);
         }
     }
 }

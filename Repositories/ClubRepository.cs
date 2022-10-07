@@ -47,11 +47,7 @@ namespace RealPetApi.Repositories
 
         public async Task<Club> GetClub(int id)
         {
-            
-            return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);
-            
-
-
+            return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);      
         }
 
         public async Task<IEnumerable<Club>> GetClubs()
@@ -71,6 +67,8 @@ namespace RealPetApi.Repositories
         public async Task<List<Sport>> GetSportsByClub(int clubId)
         {
             return await _context.ClubSports.Where(e => e.ClubId == clubId).Select(c => c.Sport).ToListAsync();
+
+
         }
     }
 }

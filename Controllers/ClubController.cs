@@ -49,6 +49,9 @@ namespace RealPetApi.Data
         {
             var club = await _clubRepository.GetClub(clubId);
             var location = await _locationRepository.GetLocation(club.LocationId);
+            var sports = await _clubRepository.GetSportsByClub(clubId);
+
+            var sportsMap = _mapper.Map<List<SportDto>>(sports);
 
             var clubDto = new ClubDto
             {
@@ -56,7 +59,8 @@ namespace RealPetApi.Data
                 Name = club.Name,
                 About = "We are a dog training facility!",
                 Founded = 2015,
-                location = location.Name
+                location = location.Name,
+                Sports = sportsMap
             };
                 
 

@@ -20,6 +20,7 @@ namespace RealPetApi.Models
         public Location? Location { get; set; }
         public int? LocationId { get; set; }
 
+        public ICollection<DogTitle>? DogTitles { get; set; }
         public ICollection<DogSport>? DogSports { get; set; }
 
 
