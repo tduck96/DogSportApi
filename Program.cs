@@ -24,6 +24,9 @@ builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ISportRepository, SportRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<ITitleRepository, TitleRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IWallPostRepository, WallPostRepository>();
 
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 

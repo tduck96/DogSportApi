@@ -70,6 +70,11 @@ namespace RealPetApi.Repositories
             }
             return sportDtos;
         }
+
+        public async Task<List<Title>> GetTitlesByDog(int dogId)
+        {
+            return await _context.DogTitles.Where(e => e.DogId == dogId).Select(c => c.Title).ToListAsync();
+        }
     }
 }
 

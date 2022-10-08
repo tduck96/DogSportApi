@@ -42,6 +42,10 @@ namespace RealPetApi.Repositories
 
         }
 
+        public async Task<List<WallPost>> GetWallPostsByProfile(int handlerId)
+        {
+            return await _context.Wallposts.Where(c => c.HandlerId == handlerId).ToListAsync();
+        }
 
         public async Task<bool> UpdateProfile(int handlerId)
         {

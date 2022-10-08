@@ -1,4 +1,6 @@
 ﻿using System;
+using AutoMapper;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -6,10 +8,13 @@ namespace RealPetApi.Repositories
     public class WallPostRepository : IWallPostRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public WallPostRepository(DataContext context)
+        public WallPostRepository(DataContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateWallPost(WallPost wallPostCreate)
@@ -29,17 +34,44 @@ namespace RealPetApi.Repositories
 
         public async Task<WallPost> GetWallPost(int wallpostId)
         {
-            return await _context.Wallposts.FirstOrDefaultAsync(w => w.Id == wallpostId);
+           return await _context.Wallposts.FirstOrDefaultAsync(w => w.Id == wallpostId);
+
+
         }
 
-        public async Task<List<Comment>> GetWallPostComments(int wallpostId)
+        public async Task<ICollection<Comment>> GetWallPostComments(int wallpostId)
         {
             return await _context.Comments.Where(c => c.WallPostId == wallpostId).ToListAsync();
         }
 
-        public async Task<List<WallPost>> GetWallPosts()
+        public async Task<List<WallPostDto>> GetWallPosts()
         {
-            return await _context.Wallposts.ToListAsync();
+           var wallposts = await _context.Wallposts.ToListAsync();
+
+            List<WallPostDto> Dtos = new List<WallPostDto>();
+
+            foreach (WallPost wallpost in wallposts)
+            {
+                var comments = await _context.Comments.Where(c => c.WallPostId == wallpost.Id).ToListAsync();
+                var commentsToReturn = _mapper.Map<List<CommentDto>>(comments);
+
+                var handler = await _context.Handlers.Where(h => h.Id == wallpost.Id).FirstOrDefaultAsync();
+                var handlerToReturn = _mapper.Map<HandlerCommentDto>(handler);
+
+                var dto = new WallPostDto
+                {
+                    Id = wallpost.Id,
+                    Body = wallpost.Body,
+                    PhotoUrl = wallpost.PhotoUrl,
+                    Handler = handlerToReturn,
+                    Comments = commentsToReturn
+
+                };
+                Dtos.Add(dto);
+                
+            }
+
+            return Dtos;
         }
 
         public async Task<bool> UpdateWallPost(WallPost wallPostUpdate)

@@ -17,6 +17,8 @@ namespace RealPetApi.Interfaces
         Task<bool> UpdateDog(Dog dogToUpdate);
 
         Task<bool> DeleteDog(int dogId);
+
+        Task<List<Title>> GetTitlesByDog(int dogId);
     }
 }
 

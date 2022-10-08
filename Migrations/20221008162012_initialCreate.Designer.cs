@@ -12,8 +12,8 @@ using RealPetApi.Data;
 namespace RealPetApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220927001243_UserAuth")]
-    partial class UserAuth
+    [Migration("20221008162012_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,13 @@ namespace RealPetApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Founded")
+                        .HasColumnType("int");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
@@ -78,6 +85,33 @@ namespace RealPetApi.Migrations
                     b.ToTable("ClubSports");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HandlerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WallPostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HandlerId");
+
+                    b.HasIndex("WallPostId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Dog", b =>
                 {
                     b.Property<int>("Id")
@@ -86,7 +120,11 @@ namespace RealPetApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BreedId")
+                    b.Property<string>("About")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BreedId")
                         .HasColumnType("int");
 
                     b.Property<int>("HandlerId")
@@ -98,6 +136,13 @@ namespace RealPetApi.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -125,6 +170,21 @@ namespace RealPetApi.Migrations
                     b.ToTable("DogSports");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.DogTitle", b =>
+                {
+                    b.Property<int>("DogId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TitleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DogId", "TitleId");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("DogTitles");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +192,10 @@ namespace RealPetApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -147,6 +211,10 @@ namespace RealPetApi.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
@@ -217,9 +285,56 @@ namespace RealPetApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Sports");
+                });
+
+            modelBuilder.Entity("RealPetApi.Models.Title", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Titles");
+                });
+
+            modelBuilder.Entity("RealPetApi.Models.WallPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HandlerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HandlerId");
+
+                    b.ToTable("Wallposts");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Club", b =>
@@ -252,11 +367,28 @@ namespace RealPetApi.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.Comment", b =>
+                {
+                    b.HasOne("RealPetApi.Models.Handler", "Handler")
+                        .WithMany("Comments")
+                        .HasForeignKey("HandlerId");
+
+                    b.HasOne("RealPetApi.Models.WallPost", "WallPost")
+                        .WithMany()
+                        .HasForeignKey("WallPostId");
+
+                    b.Navigation("Handler");
+
+                    b.Navigation("WallPost");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Dog", b =>
                 {
                     b.HasOne("RealPetApi.Models.Breed", "Breed")
                         .WithMany("Dogs")
-                        .HasForeignKey("BreedId");
+                        .HasForeignKey("BreedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("RealPetApi.Models.Handler", "Handler")
                         .WithMany("Dogs")
@@ -294,6 +426,25 @@ namespace RealPetApi.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.DogTitle", b =>
+                {
+                    b.HasOne("RealPetApi.Models.Dog", "Dog")
+                        .WithMany("DogTitles")
+                        .HasForeignKey("DogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealPetApi.Models.Title", "Title")
+                        .WithMany("DogTitles")
+                        .HasForeignKey("TitleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dog");
+
+                    b.Navigation("Title");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
                 {
                     b.HasOne("RealPetApi.Models.Location", "Location")
@@ -324,6 +475,17 @@ namespace RealPetApi.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.WallPost", b =>
+                {
+                    b.HasOne("RealPetApi.Models.Handler", "Handler")
+                        .WithMany("Wallposts")
+                        .HasForeignKey("HandlerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Handler");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Breed", b =>
                 {
                     b.Navigation("Dogs");
@@ -337,13 +499,19 @@ namespace RealPetApi.Migrations
             modelBuilder.Entity("RealPetApi.Models.Dog", b =>
                 {
                     b.Navigation("DogSports");
+
+                    b.Navigation("DogTitles");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Dogs");
 
                     b.Navigation("HandlerSports");
+
+                    b.Navigation("Wallposts");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Location", b =>
@@ -362,6 +530,11 @@ namespace RealPetApi.Migrations
                     b.Navigation("DogSports");
 
                     b.Navigation("HandlerSports");
+                });
+
+            modelBuilder.Entity("RealPetApi.Models.Title", b =>
+                {
+                    b.Navigation("DogTitles");
                 });
 #pragma warning restore 612, 618
         }

@@ -8,6 +8,7 @@ namespace RealPetApi.Interfaces
     {
         Task<HandlerProfileDto> GetProfile(int handlerId);
         Task<bool> UpdateProfile(int handlerId);
+        Task<List<WallPost>> GetWallPostsByProfile(int handlerId);
     }
 }
 

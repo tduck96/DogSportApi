@@ -30,11 +30,25 @@ namespace RealPetApi.Helpers
             CreateMap<Handler, AuthResponseDto>();
             CreateMap<AuthResponseDto, Handler>();
 
+            CreateMap<Handler, HandlerCommentDto>();
+            CreateMap<HandlerCommentDto, Handler>();
+
             CreateMap<Handler, HandlerProfileDto>();
             CreateMap<HandlerProfileDto, Handler>();
 
             CreateMap<Dog, DogDtoForUserProfile>();
             CreateMap<DogDtoForUserProfile, Dog>();
+
+            CreateMap<Title, TitleDto>();
+            CreateMap<TitleDto, Title>();
+
+            CreateMap<Comment, CommentDto>();
+            CreateMap<CommentDto, Comment>();
+
+            CreateMap<WallPost, WallPostDto>();
+            CreateMap<WallPostDto, WallPost>();
+
+
         }
     }
 }

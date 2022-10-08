@@ -95,10 +95,10 @@ namespace RealPetApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HandlerId")
+                    b.Property<int?>("HandlerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("WallPostId")
+                    b.Property<int?>("WallPostId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -321,11 +321,16 @@ namespace RealPetApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("HandlerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HandlerId");
 
                     b.ToTable("Wallposts");
                 });
@@ -363,16 +368,12 @@ namespace RealPetApi.Migrations
             modelBuilder.Entity("RealPetApi.Models.Comment", b =>
                 {
                     b.HasOne("RealPetApi.Models.Handler", "Handler")
-                        .WithMany()
-                        .HasForeignKey("HandlerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Comments")
+                        .HasForeignKey("HandlerId");
 
                     b.HasOne("RealPetApi.Models.WallPost", "WallPost")
                         .WithMany()
-                        .HasForeignKey("WallPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WallPostId");
 
                     b.Navigation("Handler");
 
@@ -472,6 +473,17 @@ namespace RealPetApi.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.WallPost", b =>
+                {
+                    b.HasOne("RealPetApi.Models.Handler", "Handler")
+                        .WithMany("Wallposts")
+                        .HasForeignKey("HandlerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Handler");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.Breed", b =>
                 {
                     b.Navigation("Dogs");
@@ -491,9 +503,13 @@ namespace RealPetApi.Migrations
 
             modelBuilder.Entity("RealPetApi.Models.Handler", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Dogs");
 
                     b.Navigation("HandlerSports");
+
+                    b.Navigation("Wallposts");
                 });
 
             modelBuilder.Entity("RealPetApi.Models.Location", b =>
