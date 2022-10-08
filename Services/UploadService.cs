@@ -14,14 +14,11 @@ namespace RealPetApi.Services
 
         public UploadService(IConfiguration config, DataContext context)
         {
-            var CloudName = config.GetSection("AppSettings: CloudName").Value;
-            var Key = config.GetSection("AppSettings: Key").Value;
-            var Secret = config.GetSection("AppSettings: Sec").Value;
+            var CloudName = config.GetSection("AppSettings:CloudName").Value;
+            var Key = config.GetSection("AppSettings:Key").Value;
+            var Secret = config.GetSection("AppSettings:Sec").Value;
 
-            Account account = new Account(
-                 "dx58mbwcg",
-                  "343199191951211",
-                    "_15L3d5PhWMbkwjQse1zltD5Hw0");
+            Account account = new Account(CloudName, Key, Secret);
                 
             _cloudinary = new Cloudinary(account);
             _context = context;
