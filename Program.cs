@@ -27,11 +27,13 @@ builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IWallPostRepository, WallPostRepository>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+          
 
 
 builder.Services.AddDbContext<DataContext>(options =>

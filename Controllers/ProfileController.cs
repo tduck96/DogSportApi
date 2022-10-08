@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
+using RealPetApi.Services;
 
 namespace RealPetApi.Controllers
 {
@@ -15,12 +16,14 @@ namespace RealPetApi.Controllers
         private readonly ILocationRepository _locationRepository;
         private readonly IBreedRepository _breedRepository;
         private readonly IProfileRepository _profileRepository;
+        private readonly IUploadService _uploadService;
 
         public ProfileController(IHandlerRepository handlerRepository,
          IMapper mapper,
          ILocationRepository locationRepository,
          IBreedRepository breedRepository,
-         IProfileRepository profileRepository
+         IProfileRepository profileRepository,
+         IUploadService uploadService
           
          )
         {
@@ -29,6 +32,7 @@ namespace RealPetApi.Controllers
             _locationRepository = locationRepository;
             _breedRepository = breedRepository;
             _profileRepository = profileRepository;
+            _uploadService = uploadService;
         }
 
         [HttpGet("{handlerId}")]
@@ -46,6 +50,25 @@ namespace RealPetApi.Controllers
             return NotFound();
 
 
+        }
+
+        [HttpPost("{handlerId}")]
+
+        public async Task<ActionResult<bool>> UploadPhoto(IFormFile file)
+        {
+            var result = await _uploadService.AddPhotoAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+
+            };
+
+
+            return Ok();
         }
 
     }
