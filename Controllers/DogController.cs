@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
+using RealPetApi.Services;
 
 namespace RealPetApi.Controllers
 {
@@ -16,12 +17,17 @@ namespace RealPetApi.Controllers
         private readonly ILocationRepository _locationRepository;
         private readonly IBreedRepository _breedRepository;
         private readonly IHandlerRepository _handlerRepository;
+        private readonly IUploadService _uploadService;
+        private readonly IDogPhotoRepository _dogPhotoRepository;
 
         public DogController(IDogRepository dogRepository,
             IMapper mapper,
             ILocationRepository locationRepository,
             IBreedRepository breedRepository,
-            IHandlerRepository handlerRepository
+            IHandlerRepository handlerRepository,
+            IUploadService uploadService,
+            IDogPhotoRepository dogPhotoRepository
+
             )
         {
            _dogRepository = dogRepository;
@@ -29,6 +35,8 @@ namespace RealPetApi.Controllers
            _locationRepository = locationRepository;
            _breedRepository = breedRepository;
             _handlerRepository = handlerRepository;
+            _uploadService = uploadService;
+            _dogPhotoRepository = dogPhotoRepository;
         }
 
         [HttpGet]
@@ -56,6 +64,8 @@ namespace RealPetApi.Controllers
             var dog = await _dogRepository.GetDog(dogId);
             var breed = await _breedRepository.GetBreed(dog.BreedId);
             var sports = await _dogRepository.GetSportsByDog(dogId);
+            var photos = await _dogRepository.GetPhotosByDog(dogId);
+           
 
             var dogProfileDto = new DogProfileDto
             {
@@ -63,7 +73,8 @@ namespace RealPetApi.Controllers
                 Name = dog.Name,
                 PhotoUrl = dog.PhotoUrl,
                 Weight = dog.Weight,
-                Sports = sports
+                Sports = sports,
+                DogPhotos = photos
             };
            
 
@@ -140,6 +151,33 @@ namespace RealPetApi.Controllers
             return NotFound();
             
         }
+
+        [HttpPost("/addphoto/{dogId}")]
+
+        public async Task<ActionResult<bool>> UploadPhoto(int dogId, IFormFile file)
+        {
+            var result = await _uploadService.AddPhotoAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+
+            var photo = new DogPhoto
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId,
+                DogId = dogId
+
+            };
+
+            photo.Dog = await _dogRepository.GetDog(dogId);
+
+            await _dogPhotoRepository.AddPhoto(photo);
+
+
+            return Ok("Photo added to collection");
+        }
+
+
 
     }
 }

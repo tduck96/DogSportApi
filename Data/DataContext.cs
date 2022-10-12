@@ -27,6 +27,7 @@ namespace RealPetApi.Data
         public DbSet<WallPost> Wallposts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<DogPhoto> DogPhotos { get; set; }
 
 
 

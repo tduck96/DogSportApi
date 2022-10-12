@@ -1,14 +1,11 @@
 ﻿using System;
-namespace RealPetApi.Models
+namespace RealPetApi.Dtos
 {
-    public class Photo
+    public class DogPhotoDto
     {
         public int Id { get; set; }
         public string Url { get; set; } = string.Empty;
         public string PublicId { get; set; } = string.Empty;
-        public int HandlerId { get; set; }
-        public Handler? Handler { get; set; }
-
     }
 }
 

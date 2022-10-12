@@ -9,6 +9,10 @@ namespace RealPetApi.Models
         public string Bio { get; set; } = string.Empty;
         public string PhotoUrl { get; set; } = string.Empty;
 
+        public ICollection<Photo> Photos { get; set; }
+
+        //public Photo? P { get; set; } 
+
         public ICollection<WallPost> Wallposts { get; set; }
         public ICollection<Comment> Comments { get; set; }
 

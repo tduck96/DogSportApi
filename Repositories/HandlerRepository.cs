@@ -72,12 +72,36 @@ namespace RealPetApi.Repositories
             return Dtos;
         }
 
+
+
         public async Task<bool> UpdateHandler(Handler handlerToUpdate)
         {
             _context.Handlers.Update(handlerToUpdate);
             var updated = await _context.SaveChangesAsync();
             return updated > 0;
         }
+
+        public async Task<List<PhotoDto>> GetPhotosByHandler(int handlerId)
+        {
+            var photos = await _context.Photos.Where(c => c.HandlerId == handlerId).ToListAsync();
+
+                List<PhotoDto> photoDtos = new List<PhotoDto>();
+
+                foreach (Photo photo in photos)
+                {
+                    var dto = new PhotoDto
+                    {
+                        Id = photo.Id,
+                        Url = photo.Url,
+                        PublicId = photo.PublicId
+                    };
+
+                    photoDtos.Add(dto);
+                }
+
+                return photoDtos;
+        }
+           
     }
 }
 

@@ -28,6 +28,8 @@ builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IWallPostRepository, WallPostRepository>();
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
+builder.Services.AddScoped<IDogPhotoRepository, DogPhotoRepository>();
 
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 

@@ -9,6 +9,7 @@ namespace RealPetApi.Models
         public int Weight { get; set; }
         public string About { get; set; } = string.Empty;
 
+        public ICollection<DogPhoto> ? Photos { get; set; }
 
 
         public Handler ? Handler { get; set; }

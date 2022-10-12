@@ -75,6 +75,26 @@ namespace RealPetApi.Repositories
         {
             return await _context.DogTitles.Where(e => e.DogId == dogId).Select(c => c.Title).ToListAsync();
         }
+
+        public async Task<List<DogPhotoDto>> GetPhotosByDog(int dogId)
+        {
+            var photos = await _context.DogPhotos.Where(c => c.DogId == dogId).ToListAsync();
+
+            List<DogPhotoDto> photoDtos = new List<DogPhotoDto>();
+
+            foreach(DogPhoto dogPhoto in photos)
+            {
+                var dto = new DogPhotoDto
+                {
+                    Id = dogPhoto.Id,
+                    Url = dogPhoto.Url,
+                    PublicId = dogPhoto.PublicId
+                };
+
+                photoDtos.Add(dto);
+            }
+            return photoDtos;
+        }
     }
 }
 
