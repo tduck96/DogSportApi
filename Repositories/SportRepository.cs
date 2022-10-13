@@ -22,10 +22,6 @@ namespace RealPetApi.Repositories
             return await _context.Sports.FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<ICollection<Handler>> GetHandlersBySport(int sportId)
-        {
-           return await _context.HandlerSports.Where(e => e.SportId == sportId).Select(c => c.Handler).ToListAsync();
-        }
 
         public async Task<ICollection<Dog>> GetDogsBySport(int sportId)
         {
@@ -57,6 +53,11 @@ namespace RealPetApi.Repositories
             _context.Sports.Remove(location);
             var deleted = await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<ICollection<UserProfile>> GetUsersBySport(int sportId)
+        {
+            return await _context.HandlerSports.Where(e => e.SportId == sportId).Select(c => c.UserProfile).ToListAsync();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace RealPetApi.Models
         public string Url { get; set; } = string.Empty;
         public string PublicId { get; set; } = string.Empty;
         public int UserProfileId { get; set; }
-        public UserProfile? Profile { get; set; }
+        public UserProfile? UserProfile { get; set; }
 
     }
 }

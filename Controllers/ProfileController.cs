@@ -18,6 +18,7 @@ namespace RealPetApi.Controllers
         private readonly IProfileRepository _profileRepository;
         private readonly IUploadService _uploadService;
         private readonly IPhotoRepository _photoRepository;
+        private readonly IUserProfileRespository _userProfileRespository;
 
         public ProfileController(IHandlerRepository handlerRepository,
          IMapper mapper,
@@ -25,7 +26,9 @@ namespace RealPetApi.Controllers
          IBreedRepository breedRepository,
          IProfileRepository profileRepository,
          IUploadService uploadService,
-         IPhotoRepository photoRepository
+         IPhotoRepository photoRepository,
+         IUserProfileRespository userProfileRespository
+            
 
          )
         {
@@ -36,6 +39,7 @@ namespace RealPetApi.Controllers
             _profileRepository = profileRepository;
             _uploadService = uploadService;
             _photoRepository = photoRepository;
+            _userProfileRespository = userProfileRespository;
         }
 
         [HttpGet("{handlerId}")]
@@ -52,9 +56,9 @@ namespace RealPetApi.Controllers
 
         }
 
-        [HttpPost("/addProfilepic/{handlerId}")]
+        [HttpPost("/addProfilepic/{userId}")]
 
-        public async Task<ActionResult<bool>> UploadPhoto(int handlerId, IFormFile file)
+        public async Task<ActionResult<bool>> UploadPhoto(int userId, IFormFile file)
         {
             var result = await _uploadService.AddPhotoAsync(file);
 
@@ -64,11 +68,11 @@ namespace RealPetApi.Controllers
                 {
                     Url = result.SecureUrl.AbsoluteUri,
                     PublicId = result.PublicId,
-                    HandlerId = handlerId
+                    UserProfileId = userId
 
                 };
 
-                photo.Handler = await _handlerRepository.GetHandler(handlerId);
+                photo.UserProfile = await _userProfileRespository.GetUser(userId);
 
                 await _photoRepository.AddPhoto(photo);
 

@@ -71,23 +71,6 @@ namespace RealPetApi.Controllers
             return Ok(clubsToReturn);
         }
 
-        [HttpGet("handlers/{locationId}")]
-        [ProducesResponseType(200, Type = typeof(Handler))]
-        [ProducesResponseType(400)]
-
-        public async Task<ActionResult<List<HandlerDto>>> GetHandlersByLocation(int locationId)
-        {
-            var handlers = await _locationRepository.GetHandlersByLocation(locationId);
-            if (handlers == null)
-                return NotFound("No clubs currently available in that location");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var handlersToReturn = _mapper.Map<List<HandlerDto>>(handlers);
-
-            return Ok(handlersToReturn);
-        }
 
         [HttpPost]
         [ProducesResponseType(204)]
@@ -103,6 +86,8 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
             var locationMap = _mapper.Map<Location>(locationCreate);
+
+            await _locationRepository.CreateLocation(locationMap);
 
             return Ok("Sucessfully added new location to records");
         }

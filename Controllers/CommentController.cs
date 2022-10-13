@@ -14,17 +14,17 @@ namespace RealPetApi.Controllers
     {
         private readonly ICommentRepository _commentRepository;
         private readonly IWallPostRepository _wallPostRepository;
-        private readonly IHandlerRepository _handlerRepository;
+        private readonly IUserProfileRespository _userProfileRepository;
         private readonly IMapper _mapper;
 
         public CommentController(ICommentRepository commentRepository,
             IWallPostRepository wallPostRepository,
-            IHandlerRepository handlerRepository,
+            IUserProfileRespository userProfileRepository,
             IMapper mapper)
         {
             _commentRepository = commentRepository;
             _wallPostRepository = wallPostRepository;
-            _handlerRepository = handlerRepository;
+            _userProfileRepository = userProfileRepository;
             _mapper = mapper;
         }
 
@@ -53,7 +53,7 @@ namespace RealPetApi.Controllers
 
         public async Task<ActionResult<bool>> CreateComment(
             [FromBody] CommentDto commentCreate,
-            [FromQuery] int handlerId,
+            [FromQuery] int userProfileId,
             [FromQuery] int wallPostID
             )
         {
@@ -63,16 +63,16 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
            var wallpost = await _wallPostRepository.GetWallPost(wallPostID);
-           var handler = await _handlerRepository.GetHandler(handlerId);
+           var user = await _userProfileRepository.GetUser(userProfileId);
 
             var comment = new Comment
             {
                 Id = commentCreate.Id,
                 Body = commentCreate.Body,
-                HandlerId = handlerId,
+                UserProfileId = userProfileId,
                 WallPostId = wallPostID,
                 WallPost = wallpost,
-                Handler = handler
+                UserProfile = user
 
             };
            
@@ -92,20 +92,20 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(404)]
 
         public async Task<ActionResult<bool>> UpdateComment(int commentId,
-            [FromQuery] int handlerId,
+            [FromQuery] int userId,
             [FromQuery] int wallpostId,
             [FromBody] CommentDto request)
         {
 
-            var handler = await _handlerRepository.GetHandler(handlerId);
+            var userProfile = await _userProfileRepository.GetUser(userId);
             var wallpost = await _wallPostRepository.GetWallPost(wallpostId);
 
             var updatedComment = new Comment
             {
                 Id = request.Id,
                 Body = request.Body,
-                HandlerId = handlerId,
-                Handler = handler,
+                UserProfileId = userId,
+                UserProfile = userProfile,
                 WallPostId = wallpostId,
                 WallPost = wallpost
             };

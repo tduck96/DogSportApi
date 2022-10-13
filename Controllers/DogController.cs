@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
+using RealPetApi.Interfaces;
 using RealPetApi.Models;
 using RealPetApi.Services;
 
@@ -19,6 +20,7 @@ namespace RealPetApi.Controllers
         private readonly IHandlerRepository _handlerRepository;
         private readonly IUploadService _uploadService;
         private readonly IDogPhotoRepository _dogPhotoRepository;
+        private readonly IUserProfileRespository _userProfileRespository;
 
         public DogController(IDogRepository dogRepository,
             IMapper mapper,
@@ -26,7 +28,8 @@ namespace RealPetApi.Controllers
             IBreedRepository breedRepository,
             IHandlerRepository handlerRepository,
             IUploadService uploadService,
-            IDogPhotoRepository dogPhotoRepository
+            IDogPhotoRepository dogPhotoRepository,
+            IUserProfileRespository userProfileRespository
 
             )
         {
@@ -37,6 +40,7 @@ namespace RealPetApi.Controllers
             _handlerRepository = handlerRepository;
             _uploadService = uploadService;
             _dogPhotoRepository = dogPhotoRepository;
+            _userProfileRespository = userProfileRespository;
         }
 
         [HttpGet]
@@ -89,7 +93,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
 
         public async Task <ActionResult<bool>> CreateDog([FromQuery] int locationId,
-            [FromQuery] int handlerId,
+            [FromQuery] int userId,
             [FromQuery] int breedId,
             [FromBody] DogDto dogCreate)
 
@@ -106,7 +110,7 @@ namespace RealPetApi.Controllers
 
             dogMap.Location = await _locationRepository.GetLocation(locationId);
             dogMap.Breed = await _breedRepository.GetBreed(breedId);
-            dogMap.Handler = await _handlerRepository.GetHandler(handlerId);
+            dogMap.UserProfile = await _userProfileRespository.GetUser(userId);
 
             await _dogRepository.CreateDog(dogMap);
 
@@ -125,7 +129,7 @@ namespace RealPetApi.Controllers
                 Id = updatedDog.Id,
                 Name = updatedDog.Name,
                 BreedId = updatedDog.BreedId,
-                HandlerId = updatedDog.Id
+               
             };
 
             var updated= await _dogRepository.UpdateDog(dog);

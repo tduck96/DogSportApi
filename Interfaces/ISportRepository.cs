@@ -9,7 +9,7 @@ namespace RealPetApi.Interfaces
 
         Task<Sport> GetSport(int id);
 
-        Task<ICollection<Handler>> GetHandlersBySport(int sportId);
+        Task<ICollection<UserProfile>> GetUsersBySport(int sportId);
 
         Task<ICollection<Dog>> GetDogsBySport(int sportId);
 

@@ -47,11 +47,11 @@ namespace RealPetApi.Data
                 .HasForeignKey(c => c.SportId);
 
             modelBuilder.Entity<HandlerSport>()
-               .HasKey(po => new { po.HandlerId, po.SportId });
+               .HasKey(po => new { po.UserProfileId, po.SportId });
             modelBuilder.Entity<HandlerSport>()
-                .HasOne(p => p.Handler)
+                .HasOne(p => p.UserProfile)
                 .WithMany(pc => pc.HandlerSports)
-                .HasForeignKey(p => p.HandlerId);
+                .HasForeignKey(p => p.UserProfileId);
             modelBuilder.Entity<HandlerSport>()
                 .HasOne(p => p.Sport)
                 .WithMany(pc => pc.HandlerSports)

@@ -35,44 +35,16 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        public async Task<List<Dog>> GetDogsByHandler(int handlerId)
-        {
-            return await _context.Dogs.Where(c => c.HandlerId == handlerId).ToListAsync();
-            
-        }
-
+     
         public async Task<Handler> GetHandler(int id)
         {
-            return await _context.Handlers
-                .Include(c => c.Dogs)
-                .FirstOrDefaultAsync(h => h.Id == id);
+            return await _context.Handlers.Where(c => c.Id == id).FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public async Task<List<HandlersListDto>> GetHandlers()
+        public Task<List<HandlersListDto>> GetHandlers()
         {
-            var handlers = await _context.Handlers.ToListAsync();
-            List<HandlersListDto> Dtos = new List<HandlersListDto>(); 
-
-            foreach (Handler handler  in handlers)
-            {
-               
-                var location = await _context.Locations.Where(c => c.Id == handler.LocationId).Select(c => c.Name).FirstOrDefaultAsync();
-                
-
-                var dto = new HandlersListDto
-                {
-                Id = handler.Id,
-                Name = handler.Name,
-                PhotoUrl = handler.PhotoUrl,
-                Location = location
-                };
-
-                Dtos.Add(dto);
-            }
-            return Dtos;
+            throw new NotImplementedException();
         }
-
-
 
         public async Task<bool> UpdateHandler(Handler handlerToUpdate)
         {
@@ -81,26 +53,7 @@ namespace RealPetApi.Repositories
             return updated > 0;
         }
 
-        public async Task<List<PhotoDto>> GetPhotosByHandler(int handlerId)
-        {
-            var photos = await _context.Photos.Where(c => c.HandlerId == handlerId).ToListAsync();
-
-                List<PhotoDto> photoDtos = new List<PhotoDto>();
-
-                foreach (Photo photo in photos)
-                {
-                    var dto = new PhotoDto
-                    {
-                        Id = photo.Id,
-                        Url = photo.Url,
-                        PublicId = photo.PublicId
-                    };
-
-                    photoDtos.Add(dto);
-                }
-
-                return photoDtos;
-        }
+      
            
     }
 }

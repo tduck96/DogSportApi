@@ -28,7 +28,7 @@ namespace RealPetApi.Services
 
         public async Task<AuthResponseDto> RegisterUser(AuthHandlerDto request)
         {
-            var user = await _context.Handlers.FirstOrDefaultAsync(h => h.Username == request.Username);
+            var user = await _context.Handlers.FirstOrDefaultAsync(h => h.Email == request.Email);
 
             if (user != null)
             {
@@ -46,10 +46,9 @@ namespace RealPetApi.Services
                 {
                     var handler = new Handler
                     {
-                        Username = request.Username,
+                        Email = request.Email,
                         PasswordHash = passwordHash,
                         PasswordSalt = passwordSalt,
-                        LocationId = 1
                     };
 
 
@@ -72,7 +71,7 @@ namespace RealPetApi.Services
         public async Task<AuthResponseDto> LoginUser(AuthHandlerDto request)
         {
 
-            var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Username == request.Username);
+            var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
             {
@@ -179,7 +178,7 @@ namespace RealPetApi.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, handler.Id.ToString()),
-                new Claim(ClaimTypes.Name, handler.Username),
+                new Claim(ClaimTypes.Email, handler.Email),
                 new Claim(ClaimTypes.Role, handler.Role)
             };
 

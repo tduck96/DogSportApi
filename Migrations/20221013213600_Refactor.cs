@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RealPetApi.Migrations
 {
-    public partial class initialCreate : Migration
+    public partial class Refactor : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,25 @@ namespace RealPetApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Breeds", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Handlers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TokenCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TokenExpires = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Handlers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,28 +104,27 @@ namespace RealPetApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Handlers",
+                name: "UserProfiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TokenCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TokenExpires = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LocationId = table.Column<int>(type: "int", nullable: false)
+                    LocationId = table.Column<int>(type: "int", nullable: false),
+                    HandlerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Handlers", x => x.Id);
+                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Handlers_Locations_LocationId",
+                        name: "FK_UserProfiles_Handlers_HandlerId",
+                        column: x => x.HandlerId,
+                        principalTable: "Handlers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "Id",
@@ -147,7 +165,7 @@ namespace RealPetApi.Migrations
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Weight = table.Column<int>(type: "int", nullable: false),
                     About = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HandlerId = table.Column<int>(type: "int", nullable: false),
+                    UserProfileId = table.Column<int>(type: "int", nullable: false),
                     BreedId = table.Column<int>(type: "int", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -161,38 +179,59 @@ namespace RealPetApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Dogs_Handlers_HandlerId",
-                        column: x => x.HandlerId,
-                        principalTable: "Handlers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Dogs_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Dogs_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "HandlerSports",
                 columns: table => new
                 {
-                    HandlerId = table.Column<int>(type: "int", nullable: false),
+                    UserProfileId = table.Column<int>(type: "int", nullable: false),
                     SportId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HandlerSports", x => new { x.HandlerId, x.SportId });
-                    table.ForeignKey(
-                        name: "FK_HandlerSports_Handlers_HandlerId",
-                        column: x => x.HandlerId,
-                        principalTable: "Handlers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_HandlerSports", x => new { x.UserProfileId, x.SportId });
                     table.ForeignKey(
                         name: "FK_HandlerSports_Sports_SportId",
                         column: x => x.SportId,
                         principalTable: "Sports",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HandlerSports_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserProfileId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Photos_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -205,15 +244,36 @@ namespace RealPetApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HandlerId = table.Column<int>(type: "int", nullable: false)
+                    UserProfileId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wallposts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Wallposts_Handlers_HandlerId",
-                        column: x => x.HandlerId,
-                        principalTable: "Handlers",
+                        name: "FK_Wallposts_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DogPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DogId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DogPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DogPhotos_Dogs_DogId",
+                        column: x => x.DogId,
+                        principalTable: "Dogs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -273,16 +333,16 @@ namespace RealPetApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HandlerId = table.Column<int>(type: "int", nullable: true),
+                    UserProfileId = table.Column<int>(type: "int", nullable: true),
                     WallPostId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Handlers_HandlerId",
-                        column: x => x.HandlerId,
-                        principalTable: "Handlers",
+                        name: "FK_Comments_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Comments_Wallposts_WallPostId",
@@ -302,9 +362,9 @@ namespace RealPetApi.Migrations
                 column: "SportId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_HandlerId",
+                name: "IX_Comments_UserProfileId",
                 table: "Comments",
-                column: "HandlerId");
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_WallPostId",
@@ -312,19 +372,24 @@ namespace RealPetApi.Migrations
                 column: "WallPostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DogPhotos_DogId",
+                table: "DogPhotos",
+                column: "DogId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Dogs_BreedId",
                 table: "Dogs",
                 column: "BreedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dogs_HandlerId",
-                table: "Dogs",
-                column: "HandlerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Dogs_LocationId",
                 table: "Dogs",
                 column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dogs_UserProfileId",
+                table: "Dogs",
+                column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DogSports_SportId",
@@ -337,19 +402,30 @@ namespace RealPetApi.Migrations
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Handlers_LocationId",
-                table: "Handlers",
-                column: "LocationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HandlerSports_SportId",
                 table: "HandlerSports",
                 column: "SportId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wallposts_HandlerId",
+                name: "IX_Photos_UserProfileId",
+                table: "Photos",
+                column: "UserProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_HandlerId",
+                table: "UserProfiles",
+                column: "HandlerId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_LocationId",
+                table: "UserProfiles",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wallposts_UserProfileId",
                 table: "Wallposts",
-                column: "HandlerId");
+                column: "UserProfileId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -361,6 +437,9 @@ namespace RealPetApi.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "DogPhotos");
+
+            migrationBuilder.DropTable(
                 name: "DogSports");
 
             migrationBuilder.DropTable(
@@ -368,6 +447,9 @@ namespace RealPetApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "HandlerSports");
+
+            migrationBuilder.DropTable(
+                name: "Photos");
 
             migrationBuilder.DropTable(
                 name: "Clubs");
@@ -386,6 +468,9 @@ namespace RealPetApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Breeds");
+
+            migrationBuilder.DropTable(
+                name: "UserProfiles");
 
             migrationBuilder.DropTable(
                 name: "Handlers");

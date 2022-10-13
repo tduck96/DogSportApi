@@ -30,6 +30,7 @@ builder.Services.AddScoped<IWallPostRepository, WallPostRepository>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
 builder.Services.AddScoped<IDogPhotoRepository, DogPhotoRepository>();
+builder.Services.AddScoped<IUserProfileRespository, UserProfileRepository>();
 
 //builder.Services.AddScoped<IDogRepository, DogRepository>();
 

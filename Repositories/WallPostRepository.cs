@@ -55,15 +55,15 @@ namespace RealPetApi.Repositories
                 var comments = await _context.Comments.Where(c => c.WallPostId == wallpost.Id).ToListAsync();
                 var commentsToReturn = _mapper.Map<List<CommentDto>>(comments);
 
-                var handler = await _context.Handlers.Where(h => h.Id == wallpost.Id).FirstOrDefaultAsync();
-                var handlerToReturn = _mapper.Map<HandlerCommentDto>(handler);
+                var user = await _context.UserProfiles.Where(h => h.Id == wallpost.Id).FirstOrDefaultAsync();
+                var userToReturn = _mapper.Map<HandlerCommentDto>(user);
 
                 var dto = new WallPostDto
                 {
                     Id = wallpost.Id,
                     Body = wallpost.Body,
                     PhotoUrl = wallpost.PhotoUrl,
-                    Handler = handlerToReturn,
+                 
                     Comments = commentsToReturn
 
                 };

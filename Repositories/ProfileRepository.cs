@@ -18,27 +18,26 @@ namespace RealPetApi.Repositories
         }
 
 
-        public async Task<HandlerProfileDto> GetProfile(int handlerId)
+        public async Task<HandlerProfileDto> GetProfile(int userId)
         {
-            var Handlers = await _context.Handlers.FirstOrDefaultAsync(c => c.Id == handlerId);
-            var Dogs = await _context.Dogs.Where(c => c.HandlerId == handlerId).ToListAsync();  
-            var Location = await _context.Locations.Where(c => c.Id == Handlers.LocationId).FirstOrDefaultAsync();
-            var Wallposts = await GetWallPostsByProfile(handlerId);
-            var Photos = await _context.Photos.Where(c => c.HandlerId == handlerId).ToListAsync();
+            var Users = await _context.UserProfiles.FirstOrDefaultAsync(c => c.Id == userId);
+            var Dogs = await _context.Dogs.Where(c => c.UserProfileId == userId).ToListAsync();  
+            
+            var Wallposts = await GetWallPostsByProfile(userId);
+            var Photos = await _context.Photos.Where(c => c.UserProfileId == userId).ToListAsync();
 
             var mappedDogs = _mapper.Map<List<DogDtoForUserProfile>>(Dogs);
-            var mappedLocation = _mapper.Map<LocationDto>(Location);
+          
             var mappedWallposts = _mapper.Map<List<WallPostDto>>(Wallposts);
             var mappedPhoto = _mapper.Map<List<PhotoDto>>(Photos);
 
 
             var toReturn = new HandlerProfileDto
             {
-                Id = Handlers.Id,
-                Name = Handlers.Name,
-                Username = Handlers.Username,
+                Id = Users.Id,
+                Name = Users.Name,
                 Dogs = mappedDogs,
-                Location = mappedLocation,
+               
                 WallPosts = mappedWallposts,
                 Photos = mappedPhoto
             };
@@ -47,9 +46,9 @@ namespace RealPetApi.Repositories
 
         }
 
-        public async Task<List<WallPost>> GetWallPostsByProfile(int handlerId)
+        public async Task<List<WallPost>> GetWallPostsByProfile(int userId)
         {
-            return await _context.Wallposts.Where(c => c.HandlerId == handlerId).ToListAsync();
+            return await _context.Wallposts.Where(c => c.UserProfileId == userId).ToListAsync();
         }
 
         public async Task<bool> UpdateProfile(int handlerId)

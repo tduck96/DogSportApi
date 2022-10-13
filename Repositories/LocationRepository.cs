@@ -34,10 +34,7 @@ namespace RealPetApi.Repositories
             
         }
 
-        public async Task<List<Handler>> GetHandlersByLocation(int locationId)
-        {
-            return await _context.Handlers.Where(c => c.LocationId == locationId).ToListAsync();
-        }
+       
 
         public async Task<Location> GetLocation(int id)
         {
@@ -50,6 +47,11 @@ namespace RealPetApi.Repositories
             var LocationList = _context.Locations.ToListAsync();
 
             return await LocationList;
+        }
+
+        public Task<List<UserProfile>> GetUsersByLocation(int locationId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> UpdateLocation(Location locationToUpdate)

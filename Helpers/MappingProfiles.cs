@@ -57,6 +57,8 @@ namespace RealPetApi.Helpers
             CreateMap<Photo, PhotoDto>();
             CreateMap<PhotoDto, Photo>();
 
+            CreateMap<UserProfile, UserCreateDto>();
+            CreateMap<UserCreateDto, UserProfile>();
 
         }
     }

@@ -63,37 +63,6 @@ namespace RealPetApi.Controllers
         }
 
 
-        [HttpGet("dogs/{handlerId}")]
-        [ProducesResponseType(200, Type = typeof(Dog))]
-        [ProducesResponseType(400)]
-
-        public async Task<ActionResult<DogDto>> GetDogsByHandler(int handlerId)
-        {
-            var dogs = await _handlerRepository.GetDogsByHandler(handlerId);
-           
-            var dogsToReturn = _mapper.Map<List<DogDto>>(dogs);
-           
-            return Ok(dogsToReturn);
-
-        }
-
-        [HttpPost]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-
-        public async Task<ActionResult> CreateHandler([FromQuery] int locationId,
-            [FromBody] HandlerDto handlerCreate)
-        {
-            var handlerMap = _mapper.Map<Handler>(handlerCreate);
-
-
-            handlerMap.Location = await _locationRepository.GetLocation(locationId);
-            
-
-            await _handlerRepository.CreateHandler(handlerMap);
-
-            return Ok("Sucessfully added new dog to records");
-        }
 
         [HttpPut("{handlerId}")]
         [ProducesResponseType(400)]

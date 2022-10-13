@@ -14,20 +14,23 @@ namespace RealPetApi.Controllers
     {
         private readonly IWallPostRepository _wallPostRepository;
         private readonly IMapper _mapper;
-        private readonly IHandlerRepository _handlerRepository;
+        private readonly IHandlerRepository _userProfileRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IUserProfileRespository _userProfileRespository;
 
         public WallPostController(
             IWallPostRepository wallPostRepository,
             IMapper mapper,
             IHandlerRepository handlerRepository,
-            ICommentRepository commentRepository)
+            ICommentRepository commentRepository,
+            IUserProfileRespository userProfileRespository)
   
         {
             _wallPostRepository = wallPostRepository;
             _mapper = mapper;
-            _handlerRepository = handlerRepository;
+            _userProfileRepository = handlerRepository;
             _commentRepository = commentRepository;
+            _userProfileRespository = userProfileRespository;
         }
 
         [HttpGet]
@@ -51,8 +54,8 @@ namespace RealPetApi.Controllers
         {
             var wallPost = await _wallPostRepository.GetWallPost(wallpostId);
 
-            var handler = await _handlerRepository.GetHandler(wallPost.HandlerId);
-            var handlerDto = _mapper.Map<HandlerCommentDto>(handler);
+            
+            
 
             var comments = await _wallPostRepository.GetWallPostComments(wallpostId);
             var commentsToDto = _mapper.Map<List<CommentDto>>(comments);
@@ -62,7 +65,6 @@ namespace RealPetApi.Controllers
                 Id = wallPost.Id,
                 Body = wallPost.Body,
                 PhotoUrl = wallPost.PhotoUrl,
-                Handler = handlerDto,
                 Comments = commentsToDto
             };
 
@@ -79,7 +81,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<ActionResult> UpdateWallPost(int wallPostId,
-            [FromQuery] int handlerId,
+            [FromQuery] int userId,
             [FromBody] WallPostUpdateDto updatedPost)
             
         {
@@ -91,7 +93,7 @@ namespace RealPetApi.Controllers
                 Id = updatedPost.Id,
                 Body = updatedPost.Body,
                 PhotoUrl = updatedPost.PhotoUrl,
-                HandlerId = handlerId,
+                UserProfileId = userId,
                 Comments = comments
             };
 
@@ -107,13 +109,13 @@ namespace RealPetApi.Controllers
         }
 
 
-        [HttpPost("{handlerId}")]
+        [HttpPost("{userId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
 
         public async Task<ActionResult> CreateWallPost(
-            int handlerId,
+            int userId,
            [FromBody] WallPostCreateDto newPost)
 
         {
@@ -130,7 +132,7 @@ namespace RealPetApi.Controllers
             var postMap = _mapper.Map<WallPost>(newPost);
 
           
-            postMap.Handler = await _handlerRepository.GetHandler(handlerId);
+            postMap.UserProfile = await _userProfileRespository.GetUser(userId);
 
             await _wallPostRepository.CreateWallPost(postMap);
 
