@@ -7,8 +7,8 @@ namespace RealPetApi.Models
         public string Body { get; set; } = string.Empty;
         public string PhotoUrl { get; set; } = string.Empty;
 
-        public int HandlerId { get; set; }
-        public Handler? Handler { get; set; }
+        public int UserProfileId { get; set; }
+        public UserProfile? UserProfile { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
 

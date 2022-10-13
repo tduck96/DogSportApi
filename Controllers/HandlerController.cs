@@ -95,21 +95,23 @@ namespace RealPetApi.Controllers
             return Ok("Sucessfully added new dog to records");
         }
 
-        [HttpPatch("{handlerId}")]
+        [HttpPut("{handlerId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> UpdateHandler(int handlerId, [FromBody] JsonPatchDocument<Handler> request)
+        public async Task<ActionResult> UpdateHandler(int handlerId, [FromBody] HandlerUpdateDto handlerCreate)
         {
             var handler = await _handlerRepository.GetHandler(handlerId);
+
+            var handlerMap = _mapper.Map<Handler>(handlerCreate);
 
             if (handler == null)
                 return NotFound();
 
-            request.ApplyTo(handler);
-            await _handlerRepository.UpdateHandler(handler);
+           
+            await _handlerRepository.UpdateHandler(handlerMap);
 
-            return Ok("Handler Updated");
+            return Ok(handlerMap);
 
 
 

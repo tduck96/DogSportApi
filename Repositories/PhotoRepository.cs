@@ -19,6 +19,13 @@ namespace RealPetApi.Repositories
             return created > 0;
         }
 
+        public async Task<bool> UpdatePhoto(Photo photoToAdd)
+        {
+            _context.Photos.Update(photoToAdd);
+            var updated = await _context.SaveChangesAsync();
+            return updated > 0;
+        }
+
         public Task<bool> DeletePhoto(int photoId)
         {
             throw new NotImplementedException();

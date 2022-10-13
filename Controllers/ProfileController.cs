@@ -45,41 +45,36 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<HandlerProfileDto>> GetProfile(int handlerId)
         {
             var handler = await _profileRepository.GetProfile(handlerId);
-            handler.Photos = await _handlerRepository.GetPhotosByHandler(handlerId);
-
-            if (handler != null)
-            {
+            
 
                 return Ok(handler);
-            }
-            return NotFound();
-
+            
 
         }
 
-        [HttpPost("{handlerId}")]
+        [HttpPost("/addProfilepic/{handlerId}")]
 
         public async Task<ActionResult<bool>> UploadPhoto(int handlerId, IFormFile file)
         {
             var result = await _uploadService.AddPhotoAsync(file);
 
             if (result.Error != null) return BadRequest(result.Error.Message);
-
             
-            var photo = new Photo
-            {
-                Url = result.SecureUrl.AbsoluteUri,
-                PublicId = result.PublicId,
-                HandlerId = handlerId
+                var photo = new Photo
+                {
+                    Url = result.SecureUrl.AbsoluteUri,
+                    PublicId = result.PublicId,
+                    HandlerId = handlerId
 
-            };
+                };
 
-            photo.Handler = await _handlerRepository.GetHandler(handlerId);
+                photo.Handler = await _handlerRepository.GetHandler(handlerId);
 
-            await _photoRepository.AddPhoto(photo);
+                await _photoRepository.AddPhoto(photo);
 
-
-            return Ok("Photo added to collection");
+                return Ok("Photo added to collection");
+            
+ 
         }
 
     }

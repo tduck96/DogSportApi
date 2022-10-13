@@ -107,6 +107,38 @@ namespace RealPetApi.Controllers
         }
 
 
+        [HttpPost("{handlerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public async Task<ActionResult> CreateWallPost(
+            int handlerId,
+           [FromBody] WallPostCreateDto newPost)
+
+        {
+
+            if (newPost == null)
+                return BadRequest(ModelState);
+
+            if (newPost == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var postMap = _mapper.Map<WallPost>(newPost);
+
+          
+            postMap.Handler = await _handlerRepository.GetHandler(handlerId);
+
+            await _wallPostRepository.CreateWallPost(postMap);
+
+            return Ok("Sucessfully added new wallpost to records");
+
+
+        }
+
         [HttpDelete("{wallpostId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]

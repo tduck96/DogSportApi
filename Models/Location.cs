@@ -7,7 +7,7 @@ namespace RealPetApi.Models
         public string Name { get; set; } = string.Empty;
 
         public List<Dog>? Dogs { get; set; }
-        public List<Handler>? Handlers { get; set; }
+        public List<UserProfile>? Profiles { get; set; }
 
         public List<Club>? Clubs { get; set; }
 

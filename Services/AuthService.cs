@@ -95,7 +95,8 @@ namespace RealPetApi.Services
                 Success = true,
                 Token = token,
                 RefreshToken = refreshToken.Token,
-                TokenExpires = refreshToken.Expires
+                TokenExpires = refreshToken.Expires,
+                Id = user.Id
               
             };
 
@@ -125,7 +126,8 @@ namespace RealPetApi.Services
                 Success = true,
                 Token = token,
                 RefreshToken = newRefreshToken.Token,
-                TokenExpires = newRefreshToken.Expires
+                TokenExpires = newRefreshToken.Expires,
+                Id = handler.Id
 
             };
         }
