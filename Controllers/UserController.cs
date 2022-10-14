@@ -54,17 +54,18 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(200, Type = typeof(UserProfile))]
         [ProducesResponseType(400)]
 
-        public async Task<ActionResult<UserProfile>> GetUser(int userId)
+        public async Task<ActionResult<UserListDto>> GetUsers()
         {
-            var user = await _userProfileRespository.GetUser(userId);
-            if (user == null)
+            var users = await _userProfileRespository.GetUsers();
+            if (users == null)
                 return NotFound();
 
+            
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(user);
+            return Ok(users);
 
         }
 

@@ -11,7 +11,9 @@ namespace RealPetApi.Models
         public int HandlerId { get; set; }
 
         public Handler Handler { get; set; }
-        public ICollection<Photo> Photos { get; set; }
+
+        public List<Photo> Photos { get; set; }
+
         public ICollection<WallPost> Wallposts { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public List<Dog>? Dogs { get; set; }

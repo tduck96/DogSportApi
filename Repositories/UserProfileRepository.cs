@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
@@ -8,10 +9,13 @@ namespace RealPetApi.Repositories
     public class UserProfileRepository : IUserProfileRespository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public UserProfileRepository(DataContext context)
+        public UserProfileRepository(DataContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateUser(UserProfile user)
@@ -41,9 +45,35 @@ namespace RealPetApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<UserProfile>> GetUsers()
+        public async Task<List<UserListDto>> GetUsers()
         {
-            throw new NotImplementedException();
+           var users = await _context.UserProfiles
+                .Include(c => c.Location)
+                .Include(c => c.Photos)
+                .ToListAsync();
+
+
+            List<UserListDto> Dtos = new List<UserListDto>();
+
+            foreach(UserProfile user in users)
+            {
+               
+                
+                var dto = new UserListDto
+                {
+                    Id = user.Id,
+                    Bio = user.Bio,
+                    Name = user.Name,
+                    Location = user.Location.Name,
+                 
+                };
+
+                Dtos.Add(dto);
+            }
+            return Dtos;
+           
+
+
         }
 
         public async Task<bool> UpdateUserInfo(UserProfile user)
