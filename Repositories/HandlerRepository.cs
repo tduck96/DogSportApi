@@ -46,6 +46,11 @@ namespace RealPetApi.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<UserProfile> GetUserProfile(int handlerId)
+        {
+            return await _context.UserProfiles.Where(c => c.HandlerId == handlerId).Include(c => c.Location).FirstOrDefaultAsync();
+        }
+
         public async Task<bool> UpdateHandler(Handler handlerToUpdate)
         {
             _context.Handlers.Update(handlerToUpdate);

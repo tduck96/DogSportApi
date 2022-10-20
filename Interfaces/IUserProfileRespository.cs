@@ -12,8 +12,9 @@ namespace RealPetApi.Interfaces
         Task<bool> CreateUser(UserProfile user);
 
         Task<Handler> GetUserHandler(int userId);
-        Task <List<Dog>> GetDogsByUser(int userId);
-        Task <List<PhotoDto>> GetPhotosByUser(int userId);
+        Task<List<DogDtoForUserProfile>> GetDogsByUser(int userId);
+        Task<List<WallPostProfileDto>> GetWallPostsByUser(int userId);
+        Task<List<PhotoDto>> GetPhotosByUser(int userId);
     }
 }
 

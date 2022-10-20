@@ -25,25 +25,38 @@ namespace RealPetApi.Repositories
             return created > 0;
         }
 
-        public Task<List<Dog>> GetDogsByUser(int userId)
+        public async Task<List<DogDtoForUserProfile>> GetDogsByUser(int userId)
         {
-            throw new NotImplementedException();
+            var dogs = await _context.Dogs.Where(c => c.UserProfileId == userId).ToListAsync();
+
+            var dogMap = _mapper.Map<List<DogDtoForUserProfile>>(dogs);
+
+            return dogMap;
         }
 
-        public Task<List<PhotoDto>> GetPhotosByUser(int userId)
+        public async Task<List<PhotoDto>> GetPhotosByUser(int userId)
         {
-            throw new NotImplementedException();
+            var photos = await _context.Photos.Where(c => c.UserProfileId == userId).ToListAsync();
+
+            var photoMap = _mapper.Map<List<PhotoDto>>(photos);
+
+            return photoMap;
         }
 
         public async Task<UserProfile> GetUser(int userId)
         {
-            return await _context.UserProfiles.Where(c => c.Id == userId).FirstOrDefaultAsync();
+           return await _context.UserProfiles.Where(c => c.Id == userId).Include(c => c.Location).FirstOrDefaultAsync();
+
         }
 
-        public Task<Handler> GetUserHandler(int userId)
+        public async Task<Handler> GetUserHandler(int userId)
         {
-            throw new NotImplementedException();
+            var user = await GetUser(userId);
+            var handlerId = user.HandlerId;
+
+            return await _context.Handlers.Where(c => c.Id == handlerId).FirstOrDefaultAsync();
         }
+
 
         public async Task<List<UserListDto>> GetUsers()
         {
@@ -57,7 +70,9 @@ namespace RealPetApi.Repositories
 
             foreach(UserProfile user in users)
             {
-               
+                var photo = await _context.Photos.Where(c => c.UserProfileId == user.Id)
+                    .Select(c => c.Url).ToListAsync();
+
                 
                 var dto = new UserListDto
                 {
@@ -65,6 +80,7 @@ namespace RealPetApi.Repositories
                     Bio = user.Bio,
                     Name = user.Name,
                     Location = user.Location.Name,
+                    Urls = photo
                  
                 };
 
@@ -72,8 +88,6 @@ namespace RealPetApi.Repositories
             }
             return Dtos;
            
-
-
         }
 
         public async Task<bool> UpdateUserInfo(UserProfile user)
@@ -82,6 +96,17 @@ namespace RealPetApi.Repositories
             var updated = await _context.SaveChangesAsync();
             return updated > 0;
         }
+
+        public async Task<List<WallPostProfileDto>> GetWallPostsByUser(int userId)
+        {
+            var wallposts = await _context.Wallposts.Where(c => c.UserProfileId == userId).ToListAsync();
+
+            var wallPostMap = _mapper.Map<List<WallPostProfileDto>>(wallposts);
+            
+
+            return wallPostMap;
+        }
+
     }
 }
 

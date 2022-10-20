@@ -62,17 +62,19 @@ namespace RealPetApi.Services
                     return new AuthResponseDto
                     {
                         Success = true,
-                        Message = "Welcome!"
+                        Message = "Welcome!",
+                       
                     };
                 }
             };
+
         }
 
         public async Task<AuthResponseDto> LoginUser(AuthHandlerDto request)
         {
 
             var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Email == request.Email);
-
+      
             if (user == null)
             {
                 return new AuthResponseDto { Message = "Invalid Username" };
@@ -85,8 +87,12 @@ namespace RealPetApi.Services
             }
 
             string token = CreateToken(user);
+           
             var refreshToken = CreateRefreshToken();
             await SetRefreshToken(refreshToken, user);
+
+
+
 
 
             return new AuthResponseDto
@@ -95,8 +101,7 @@ namespace RealPetApi.Services
                 Token = token,
                 RefreshToken = refreshToken.Token,
                 TokenExpires = refreshToken.Expires,
-                Id = user.Id
-              
+                Id = user.Id,
             };
 
         }
@@ -120,13 +125,15 @@ namespace RealPetApi.Services
             var newRefreshToken = CreateRefreshToken();
             await SetRefreshToken(newRefreshToken, handler);
 
+         
             return new AuthResponseDto
             {
                 Success = true,
                 Token = token,
                 RefreshToken = newRefreshToken.Token,
                 TokenExpires = newRefreshToken.Expires,
-                Id = handler.Id
+                Id = handler.Id,
+               
 
             };
         }
@@ -232,6 +239,7 @@ namespace RealPetApi.Services
 
         }
 
+       
         private async Task LogoutUser(Handler handler)
         {
             var cookieOptions = new CookieOptions

@@ -13,13 +13,15 @@ namespace RealPetApi.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
+        private readonly IUserProfileRespository _userProfileRepository;
 
         public AuthHandler(IAuthService authService,
-            IMapper mapper)
+            IMapper mapper,
+            IUserProfileRespository userProfileRepository)
         {
             _authService = authService;
             _mapper = mapper;
-            
+            _userProfileRepository = userProfileRepository;
         }
 
         [HttpPost]
@@ -27,6 +29,7 @@ namespace RealPetApi.Controllers
         {
             var response = await _authService.RegisterUser(request);
             var responseToSend = _mapper.Map<AuthResponseDto>(response);
+
             
 
             return Ok(responseToSend);
@@ -36,10 +39,11 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<Handler>> LoginUser(AuthHandlerDto request)
         {
             var response = await _authService.LoginUser(request);
-            if (response.Success)
+
                 return Ok(response);
 
-            return BadRequest(response.Message);
+            
+
         }
 
         [HttpPost("refresh-token")]

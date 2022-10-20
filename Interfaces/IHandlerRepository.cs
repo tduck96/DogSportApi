@@ -9,6 +9,7 @@ namespace RealPetApi.Data
     
         Task<List<HandlersListDto>>GetHandlers();
         Task<Handler> GetHandler(int id);
+        Task<UserProfile> GetUserProfile(int handlerId);
         Task<bool> CreateHandler(Handler handlerToCreate);
         Task<bool> UpdateHandler(Handler handlerToUpdate);
         Task<bool> DeleteHandler(int handlerId);

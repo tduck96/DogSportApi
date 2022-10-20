@@ -47,7 +47,7 @@ namespace RealPetApi.Controllers
 
             await _userProfileRespository.CreateUser(userMap);
 
-            return Ok("Sucessfully added new location to records");
+            return Ok("Sucessfully added new profile to records");
         }
 
         [HttpGet]
@@ -60,7 +60,7 @@ namespace RealPetApi.Controllers
             if (users == null)
                 return NotFound();
 
-            
+
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -70,13 +70,15 @@ namespace RealPetApi.Controllers
         }
 
 
-        [HttpGet("{userId}")]
+        [HttpGet("profile/{handlerId}")]
+
         [ProducesResponseType(200, Type = typeof(UserProfile))]
         [ProducesResponseType(400)]
 
-        public async Task<ActionResult<UserProfile>> GetUser(int userId)
+        public async Task<ActionResult<HandlerProfileDto>> GetUserProfile(int handlerId)
         {
-            var user = await _userProfileRespository.GetUser(userId);
+            var user = await _handlerRepository.GetUserProfile(handlerId);
+
             if (user == null)
                 return NotFound();
 
@@ -84,29 +86,58 @@ namespace RealPetApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(user);
+            var userMap = _mapper.Map<HandlerProfileDto>(user);
+            userMap.Photos = await _userProfileRespository.GetPhotosByUser(user.Id);
+            userMap.WallPosts = await _userProfileRespository.GetWallPostsByUser(user.Id);
+            userMap.Dogs = await _userProfileRespository.GetDogsByUser(user.Id);
+
+
+            return Ok(userMap);
 
         }
 
-        [HttpPut("{userId}")]
+
+        [HttpGet("{userId}")]
+        [ProducesResponseType(200, Type = typeof(UserProfile))]
+        [ProducesResponseType(400)]
+
+        public async Task<ActionResult<HandlerProfileDto>> GetUser(int userId)
+        {
+            var user = await _userProfileRespository.GetUser(userId);
+            if (user == null)
+                return NotFound();
+
+             var userMap = _mapper.Map<HandlerProfileDto>(user);
+            userMap.Photos = await _userProfileRespository.GetPhotosByUser(user.Id);
+            userMap.WallPosts = await _userProfileRespository.GetWallPostsByUser(user.Id);
+            userMap.Dogs = await _userProfileRespository.GetDogsByUser(user.Id);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(userMap);
+
+        }
+
+        [HttpPut("{handlerId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> UpdateDog(int userId,
-            [FromQuery] int handlerId,
+        public async Task<ActionResult<bool>> UpdateUser(int handlerId,
             [FromBody] UserCreateDto user)
         {
             if (user == null) return BadRequest(ModelState);
 
             var userMap = _mapper.Map<UserProfile>(user);
-
             userMap.Handler = await _handlerRepository.GetHandler(handlerId);
+        
 
             var updated = await _userProfileRespository.UpdateUserInfo(userMap);
 
 
             if (updated)
                 return Ok("Record Updated");
+
             return NotFound();
 
 

@@ -8,7 +8,7 @@ namespace RealPetApi.Dtos
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Bio { get; set; } = "Hello, welcome to my profile";
-        public ICollection<Photo> Photos { get; set; }
+        public List<string> Urls { get; set; }
         public string Location { get; set; }
     }
 }

@@ -63,6 +63,10 @@ namespace RealPetApi.Helpers
             CreateMap<UserProfile, UserListDto>();
             CreateMap<UserListDto, UserProfile>();
 
+            CreateMap<UserProfile, HandlerProfileDto>();
+
+            CreateMap<WallPost, WallPostProfileDto>();
+
 
         }
     }

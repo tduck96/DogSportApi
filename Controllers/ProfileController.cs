@@ -48,10 +48,13 @@ namespace RealPetApi.Controllers
 
         public async Task<ActionResult<HandlerProfileDto>> GetProfile(int handlerId)
         {
-            var handler = await _profileRepository.GetProfile(handlerId);
-            
+            //var handler = await _profileRepository.GetProfile(handlerId);
+            var handler = new HandlerProfileDto
+            {
 
-                return Ok(handler);
+            };
+
+               return handler;
             
 
         }

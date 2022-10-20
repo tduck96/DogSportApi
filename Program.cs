@@ -42,6 +42,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+  
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
