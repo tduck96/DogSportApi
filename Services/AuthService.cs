@@ -63,6 +63,7 @@ namespace RealPetApi.Services
                     {
                         Success = true,
                         Message = "Welcome!",
+                        Id = handler.Id
                        
                     };
                 }
@@ -74,6 +75,7 @@ namespace RealPetApi.Services
         {
 
             var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var profile = await _context.UserProfiles.Where(c => c.HandlerId == user.Id).FirstOrDefaultAsync();
       
             if (user == null)
             {
@@ -102,6 +104,7 @@ namespace RealPetApi.Services
                 RefreshToken = refreshToken.Token,
                 TokenExpires = refreshToken.Expires,
                 Id = user.Id,
+                UserId = profile.Id
             };
 
         }
@@ -111,6 +114,7 @@ namespace RealPetApi.Services
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
 
             var handler = await _context.Handlers.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var profile = await _context.UserProfiles.Where(c => c.HandlerId == handler.Id).FirstOrDefaultAsync();
 
             if (handler == null)
             {
@@ -133,7 +137,9 @@ namespace RealPetApi.Services
                 RefreshToken = newRefreshToken.Token,
                 TokenExpires = newRefreshToken.Expires,
                 Id = handler.Id,
-               
+                UserId = profile.Id
+
+
 
             };
         }

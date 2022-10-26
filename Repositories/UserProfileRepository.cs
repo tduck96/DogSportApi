@@ -100,10 +100,8 @@ namespace RealPetApi.Repositories
         public async Task<List<WallPostProfileDto>> GetWallPostsByUser(int userId)
         {
             var wallposts = await _context.Wallposts.Where(c => c.UserProfileId == userId).ToListAsync();
-
             var wallPostMap = _mapper.Map<List<WallPostProfileDto>>(wallposts);
-            
-
+          
             return wallPostMap;
         }
 

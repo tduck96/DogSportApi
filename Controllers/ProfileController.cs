@@ -63,26 +63,35 @@ namespace RealPetApi.Controllers
 
         public async Task<ActionResult<bool>> UploadPhoto(int userId, IFormFile file)
         {
+            var user = await _userProfileRespository.GetUser(userId);
             var result = await _uploadService.AddPhotoAsync(file);
 
             if (result.Error != null) return BadRequest(result.Error.Message);
-            
+
+          
                 var photo = new Photo
                 {
                     Url = result.SecureUrl.AbsoluteUri,
                     PublicId = result.PublicId,
-                    UserProfileId = userId
+                    UserProfileId = userId,
+                    ProfilePic = true
 
                 };
+
+
+
 
                 photo.UserProfile = await _userProfileRespository.GetUser(userId);
 
                 await _photoRepository.AddPhoto(photo);
 
                 return Ok("Photo added to collection");
+            }
+
+           
             
  
-        }
+        
 
     }
 }

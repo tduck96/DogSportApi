@@ -14,12 +14,7 @@ namespace RealPetApi.Models
 
        
         public UserProfile UserProfile { get; set; }
-        //public int UserHandlerId { get; set; }
-
-
-
-
-
+        
     }
 }
 

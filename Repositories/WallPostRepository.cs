@@ -63,7 +63,6 @@ namespace RealPetApi.Repositories
                     Id = wallpost.Id,
                     Body = wallpost.Body,
                     PhotoUrl = wallpost.PhotoUrl,
-                 
                     Comments = commentsToReturn
 
                 };

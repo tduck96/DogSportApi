@@ -119,26 +119,34 @@ namespace RealPetApi.Controllers
 
         }
 
-        [HttpPut("{handlerId}")]
+        [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<bool>> UpdateUser(int handlerId,
+        public async Task<ActionResult<bool>> UpdateUser(
             [FromBody] UserCreateDto user)
         {
             if (user == null) return BadRequest(ModelState);
 
-            var userMap = _mapper.Map<UserProfile>(user);
-            userMap.Handler = await _handlerRepository.GetHandler(handlerId);
-        
+            var profile = new UserProfile
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Bio = user.Bio,
+                LocationId = user.LocationId,
+                HandlerId = user.HandlerId
 
-            var updated = await _userProfileRespository.UpdateUserInfo(userMap);
+            };
 
+            var updated = await _userProfileRespository.UpdateUserInfo(profile);
 
             if (updated)
                 return Ok("Record Updated");
 
             return NotFound();
+
+
+           
 
 
         }
