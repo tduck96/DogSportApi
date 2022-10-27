@@ -47,7 +47,7 @@ namespace RealPetApi.Controllers
 
             await _userProfileRespository.CreateUser(userMap);
 
-            return Ok("Sucessfully added new profile to records");
+            return Ok(userMap);
         }
 
         [HttpGet]

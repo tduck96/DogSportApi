@@ -128,7 +128,11 @@ namespace RealPetApi.Controllers
             {
                 Id = updatedDog.Id,
                 Name = updatedDog.Name,
-                BreedId = updatedDog.BreedId,
+                About = updatedDog.About,
+                PhotoUrl = updatedDog.PhotoUrl,
+                BreedId = 1,
+                LocationId = 1,
+                UserProfileId = updatedDog.UserProfileId
                
             };
 
@@ -156,29 +160,24 @@ namespace RealPetApi.Controllers
             
         }
 
-        [HttpPost("/addphoto/{dogId}")]
+        [HttpPost("addphoto/")]
 
-        public async Task<ActionResult<bool>> UploadPhoto(int dogId, IFormFile file)
+        public async Task<ActionResult<bool>> UploadPhoto(IFormFile file)
         {
             var result = await _uploadService.AddPhotoAsync(file);
 
-            if (result.Error != null) return BadRequest(result.Error.Message);
+            //if (result.Error != null) return BadRequest(result.Error.Message);
 
 
             var photo = new DogPhoto
             {
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId,
-                DogId = dogId
 
             };
 
-            photo.Dog = await _dogRepository.GetDog(dogId);
 
-            await _dogPhotoRepository.AddPhoto(photo);
-
-
-            return Ok("Photo added to collection");
+            return Ok(photo.Url);
         }
 
 
