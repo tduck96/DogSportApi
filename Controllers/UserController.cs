@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
+using static System.Net.WebRequestMethods;
 
 namespace RealPetApi.Controllers
 {
@@ -42,6 +43,8 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
             var userMap = _mapper.Map<UserProfile>(user);
+            userMap.PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1664587012/cld-sample.jpg";
+
             userMap.Handler = await _handlerRepository.GetHandler(handlerId);
             userMap.Location = await _locationRepository.GetLocation(user.LocationId);
 

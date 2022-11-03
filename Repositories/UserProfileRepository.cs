@@ -80,7 +80,7 @@ namespace RealPetApi.Repositories
                     Bio = user.Bio,
                     Name = user.Name,
                     Location = user.Location.Name,
-                    Urls = photo
+                    photoUrl = user.PhotoUrl
                  
                 };
 

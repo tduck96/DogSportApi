@@ -14,7 +14,7 @@ namespace RealPetApi.Controllers
     {
         private readonly IWallPostRepository _wallPostRepository;
         private readonly IMapper _mapper;
-        private readonly IHandlerRepository _userProfileRepository;
+        private readonly IHandlerRepository _handlerRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IUserProfileRespository _userProfileRespository;
 
@@ -28,7 +28,7 @@ namespace RealPetApi.Controllers
         {
             _wallPostRepository = wallPostRepository;
             _mapper = mapper;
-            _userProfileRepository = handlerRepository;
+            _handlerRepository = handlerRepository;
             _commentRepository = commentRepository;
             _userProfileRespository = userProfileRespository;
         }
@@ -53,19 +53,20 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<WallPostDto>> GetWallPost(int wallpostId)
         {
             var wallPost = await _wallPostRepository.GetWallPost(wallpostId);
-
-            
-            
-
             var comments = await _wallPostRepository.GetWallPostComments(wallpostId);
             var commentsToDto = _mapper.Map<List<CommentDto>>(comments);
+            var user = await _userProfileRespository.GetUser(wallPost.UserProfileId);
+       
 
             var wallpostDto = new WallPostDto
             {
                 Id = wallPost.Id,
                 Body = wallPost.Body,
                 PhotoUrl = wallPost.PhotoUrl,
-                Comments = commentsToDto
+                Comments = commentsToDto,
+                Name = user.Name,
+                UserPhoto = user.PhotoUrl
+
             };
 
 

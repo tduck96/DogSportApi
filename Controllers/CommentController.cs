@@ -52,7 +52,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<bool>> CreateComment(
-            [FromBody] CommentDto commentCreate,
+            [FromBody] CommentCreateDto commentCreate,
             [FromQuery] int userProfileId,
             [FromQuery] int wallPostID
             )
@@ -69,6 +69,8 @@ namespace RealPetApi.Controllers
             {
                 Id = commentCreate.Id,
                 Body = commentCreate.Body,
+                WriterPhotoUrl = user.PhotoUrl,
+                WriterName = user.Name,
                 UserProfileId = userProfileId,
                 WallPostId = wallPostID,
                 WallPost = wallpost,
