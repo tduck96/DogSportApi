@@ -102,7 +102,7 @@ namespace RealPetApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var sportMap = _mapper.Map<Location>(sportCreate);
+            var sportMap = _mapper.Map<Sport>(sportCreate);
 
             return Ok("Sucessfully added new location to records");
         }

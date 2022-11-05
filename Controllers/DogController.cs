@@ -75,6 +75,7 @@ namespace RealPetApi.Controllers
             {
                 Id = dog.Id,
                 Name = dog.Name,
+                About = dog.About,
                 PhotoUrl = dog.PhotoUrl,
                 Weight = dog.Weight,
                 Sports = sports,
@@ -107,8 +108,6 @@ namespace RealPetApi.Controllers
 
             var dogMap = _mapper.Map<Dog>(dogCreate);
 
-
-            dogMap.Location = await _locationRepository.GetLocation(locationId);
             dogMap.Breed = await _breedRepository.GetBreed(breedId);
             dogMap.UserProfile = await _userProfileRespository.GetUser(userId);
 
@@ -122,7 +121,7 @@ namespace RealPetApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-            public async Task<ActionResult> UpdateDog(int dogId, [FromBody] DogDto updatedDog)
+            public async Task<ActionResult<bool>> UpdateDog(int dogId, [FromBody] DogDto updatedDog)
         {
             var dog = new Dog
             {
@@ -130,8 +129,8 @@ namespace RealPetApi.Controllers
                 Name = updatedDog.Name,
                 About = updatedDog.About,
                 PhotoUrl = updatedDog.PhotoUrl,
-                BreedId = 1,
-                LocationId = 1,
+                BreedId = updatedDog.BreedId,
+                Weight = updatedDog.Weight,
                 UserProfileId = updatedDog.UserProfileId
                
             };
