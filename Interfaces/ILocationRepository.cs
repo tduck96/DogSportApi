@@ -1,4 +1,5 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Interfaces
@@ -11,7 +12,7 @@ namespace RealPetApi.Interfaces
 
         Task <List<Club>> GetClubsByLocation(int locationId);
 
-        Task<List<UserProfile>> GetUsersByLocation(int locationId);
+        Task<List<UserListDto>> GetUsersByLocation(int locationId);
 
         Task<bool> CreateLocation(Location location);
 

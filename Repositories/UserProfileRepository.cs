@@ -62,20 +62,15 @@ namespace RealPetApi.Repositories
         {
            var users = await _context.UserProfiles
                 .Include(c => c.Location)
-                .Include(c => c.Photos)
                 .ToListAsync();
-
 
             List<UserListDto> Dtos = new List<UserListDto>();
 
             foreach(UserProfile user in users)
             {
-                var photo = await _context.Photos.Where(c => c.UserProfileId == user.Id)
-                    .Select(c => c.Url).ToListAsync();
-
                 
                 var dto = new UserListDto
-                {
+               {
                     Id = user.Id,
                     Bio = user.Bio,
                     Name = user.Name,
@@ -89,6 +84,9 @@ namespace RealPetApi.Repositories
             return Dtos;
            
         }
+
+
+       
 
         public async Task<bool> UpdateUserInfo(UserProfile user)
         {

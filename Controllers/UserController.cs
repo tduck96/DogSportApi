@@ -42,9 +42,14 @@ namespace RealPetApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userMap = _mapper.Map<UserProfile>(user);
-            userMap.PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1664587012/cld-sample.jpg";
+            if (user.PhotoUrl == "")
+            {
+                user.PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668044646/avatar_qdt0kt.png";
+            }
 
+            var userMap = _mapper.Map<UserProfile>(user);
+
+            
             userMap.Handler = await _handlerRepository.GetHandler(handlerId);
             userMap.Location = await _locationRepository.GetLocation(user.LocationId);
 
@@ -62,7 +67,6 @@ namespace RealPetApi.Controllers
             var users = await _userProfileRespository.GetUsers();
             if (users == null)
                 return NotFound();
-
 
 
             if (!ModelState.IsValid)

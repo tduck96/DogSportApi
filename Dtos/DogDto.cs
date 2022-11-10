@@ -11,6 +11,7 @@ namespace RealPetApi.Dtos
         public int Weight { get; set; }
         public string About { get; set; }
         public string PhotoUrl { get; set; }
+        public string Titles { get; set; }
         public int BreedId { get; set; }
         public int LocationId { get; set; }
         public int UserProfileId { get; set; }

@@ -29,6 +29,7 @@ namespace RealPetApi.Repositories
 
         }
 
+
         public async Task<ICollection<Dog>> GetDogs()
         {
             return await _context.Dogs.ToListAsync();
@@ -95,6 +96,8 @@ namespace RealPetApi.Repositories
             }
             return photoDtos;
         }
+
+        
     }
 }
 

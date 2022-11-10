@@ -6,7 +6,7 @@ namespace RealPetApi.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
-        public string PhotoUrl { get; set; } = string.Empty;
+        public string PhotoUrl { get; set; } = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1664587012/cld-sample.jpg";
         public int LocationId { get; set; }
         public int HandlerId { get; set; }
         public Handler Handler { get; set; }

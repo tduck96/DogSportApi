@@ -71,6 +71,27 @@ namespace RealPetApi.Controllers
             return Ok(clubsToReturn);
         }
 
+        [HttpGet("handlers/{locationId}")]
+        [ProducesResponseType(200, Type = typeof(UserListDto))]
+        [ProducesResponseType(400)]
+
+        public async Task<ActionResult<List<UserListDto>>> GetUsersByLocation(int locationId)
+        {
+            var users = await _locationRepository.GetUsersByLocation(locationId);
+
+            if (users == null)
+                return NotFound("No users currently available in that location");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var usersToReturn = _mapper.Map<List<UserListDto>>(users);
+
+            return Ok(usersToReturn);
+        }
+
+
+
 
         [HttpPost]
         [ProducesResponseType(204)]

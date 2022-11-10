@@ -8,6 +8,8 @@ namespace RealPetApi.Models
         public string PhotoUrl { get; set; } = string.Empty;
         public int Weight { get; set; }
         public string About { get; set; } = string.Empty;
+        public string Titles { get; set; } = string.Empty;
+
 
         public ICollection<DogPhoto> ? Photos { get; set; }
 
@@ -18,8 +20,9 @@ namespace RealPetApi.Models
         public Breed? Breed { get; set; }
         public int BreedId { get; set; }
 
-        public ICollection<DogTitle>? DogTitles { get; set; }
+
         public ICollection<DogSport>? DogSports { get; set; }
+        public ICollection<DogTitle> DogTitles { get; set; }
 
 
     }

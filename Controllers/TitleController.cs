@@ -74,7 +74,7 @@ namespace RealPetApi.Controllers
 
             await _titleRepository.CreateTitle(titleMap);
 
-            return Ok("Sucessfully added new location to records");
+            return Ok("Sucessfully added new Title to records");
         }
 
 

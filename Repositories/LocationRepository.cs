@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -49,9 +50,31 @@ namespace RealPetApi.Repositories
             return await LocationList;
         }
 
-        public Task<List<UserProfile>> GetUsersByLocation(int locationId)
+        public async Task<List<UserListDto>> GetUsersByLocation(int locationId)
         {
-            throw new NotImplementedException();
+            var users =  await _context.UserProfiles.Where(c => c.LocationId == locationId)
+                .Include(c => c.Location).
+                ToListAsync();
+
+            List<UserListDto> Dtos = new List<UserListDto>();
+
+            foreach (UserProfile user in users)
+            {
+
+                var dto = new UserListDto
+                {
+                    Id = user.Id,
+                    Bio = user.Bio,
+                    Name = user.Name,
+                    Location = user.Location.Name,
+                    photoUrl = user.PhotoUrl
+
+                };
+
+                Dtos.Add(dto);
+            }
+            return Dtos;
+
         }
 
         public async Task<bool> UpdateLocation(Location locationToUpdate)

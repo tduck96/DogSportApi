@@ -7,6 +7,7 @@ namespace RealPetApi.Models
         public string Body { get; set; } = string.Empty;
         public string WriterPhotoUrl { get; set; } = String.Empty;
         public string WriterName { get; set; } = String.Empty;
+        //public DateTime Date { get; set; }
 
         public int? UserProfileId { get; set; }
         public UserProfile? UserProfile { get; set; }

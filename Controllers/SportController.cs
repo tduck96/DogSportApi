@@ -104,7 +104,9 @@ namespace RealPetApi.Controllers
 
             var sportMap = _mapper.Map<Sport>(sportCreate);
 
-            return Ok("Sucessfully added new location to records");
+            await _sportRepository.CreateSport(sportMap);
+
+            return Ok("Sucessfully added new sport to records");
         }
 
 

@@ -7,6 +7,8 @@ namespace RealPetApi.Models
         public string Name { get; set; } = string.Empty;
         public string PhotoUrl { get; set; } = string.Empty;
 
+        public List<Dog> Dogs { get; set; }
+
         public ICollection<DogSport>? DogSports { get; set; }
         public ICollection<ClubSport>? ClubSports { get; set; }
         public ICollection<HandlerSport>? HandlerSports { get; set; }

@@ -6,6 +6,7 @@ namespace RealPetApi.Models
         public int Id { get; set; }
         public string Body { get; set; } = string.Empty;
         public string PhotoUrl { get; set; } = string.Empty;
+        //public DateTime Date { get; set; }
 
         public int UserProfileId { get; set; }
         public UserProfile? UserProfile { get; set; }
