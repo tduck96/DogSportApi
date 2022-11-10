@@ -14,6 +14,8 @@ namespace RealPetApi.Interfaces
 
         Task<List<DogPhotoDto>> GetPhotosByDog(int dogId);
 
+        Task<bool> AddSportsToDog(DogSport dogsport);
+
         Task<bool> CreateDog(Dog dogToCreate);
 
         Task<bool> UpdateDog(Dog dogToUpdate);

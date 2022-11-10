@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RealPetApi.Migrations
 {
-    public partial class Refactor : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -74,7 +74,8 @@ namespace RealPetApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DogId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,6 +112,7 @@ namespace RealPetApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: false),
                     HandlerId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -165,9 +167,11 @@ namespace RealPetApi.Migrations
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Weight = table.Column<int>(type: "int", nullable: false),
                     About = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Titles = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserProfileId = table.Column<int>(type: "int", nullable: false),
                     BreedId = table.Column<int>(type: "int", nullable: false),
-                    LocationId = table.Column<int>(type: "int", nullable: true)
+                    LocationId = table.Column<int>(type: "int", nullable: true),
+                    SportId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,6 +186,11 @@ namespace RealPetApi.Migrations
                         name: "FK_Dogs_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Dogs_Sports_SportId",
+                        column: x => x.SportId,
+                        principalTable: "Sports",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Dogs_UserProfiles_UserProfileId",
@@ -223,6 +232,7 @@ namespace RealPetApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePic = table.Column<bool>(type: "bit", nullable: false),
                     UserProfileId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -333,6 +343,8 @@ namespace RealPetApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WriterPhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WriterName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserProfileId = table.Column<int>(type: "int", nullable: true),
                     WallPostId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -385,6 +397,11 @@ namespace RealPetApi.Migrations
                 name: "IX_Dogs_LocationId",
                 table: "Dogs",
                 column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dogs_SportId",
+                table: "Dogs",
+                column: "SportId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dogs_UserProfileId",
@@ -464,10 +481,10 @@ namespace RealPetApi.Migrations
                 name: "Titles");
 
             migrationBuilder.DropTable(
-                name: "Sports");
+                name: "Breeds");
 
             migrationBuilder.DropTable(
-                name: "Breeds");
+                name: "Sports");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

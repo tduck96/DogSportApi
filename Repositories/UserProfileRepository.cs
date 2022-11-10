@@ -103,6 +103,19 @@ namespace RealPetApi.Repositories
             return wallPostMap;
         }
 
+        public async Task<bool> AddUserSport(HandlerSport sport)
+        {
+            await _context.HandlerSports.AddAsync(sport);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
+        }
+
+        public async Task<List<Sport>> GetSportsByUser(int id)
+        {
+            return await _context.HandlerSports.Where(c => c.UserProfileId == id).Select(c => c.Sport).ToListAsync();
+        }
+
+      
     }
 }
 

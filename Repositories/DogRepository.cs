@@ -4,16 +4,22 @@ using RealPetApi.Dtos;
 using RealPetApi.Interfaces;
 using System.Security.Cryptography;
 using RealPetApi.Models;
+using AutoMapper;
 
 namespace RealPetApi.Repositories
 {
     public class DogRepository : IDogRepository
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public DogRepository(DataContext context)
+        public DogRepository(DataContext context,
+            IMapper mapper
+          )
         {
             _context = context;
+            _mapper = mapper;
+
         }
 
         public async Task<bool> CreateDog(Dog dogToCreate)
@@ -55,21 +61,23 @@ namespace RealPetApi.Repositories
         {
             var sports = await _context.DogSports.Where(c => c.DogId == dogId).Select(c => c.Sport).ToListAsync();
 
-            List<SportDto> sportDtos = new List<SportDto>();
+            var sportsMap = _mapper.Map<List<SportDto>>(sports);
+            //List<SportDto> sportDtos = new List<SportDto>();
 
-            foreach (Sport sport in sports)
-            {
+            //foreach (Sport sport in sports)
+            //{
 
-                var dto = new SportDto
-                {
-                    Id = sport.Id,
-                    Name = sport.Name,
-                    PhotoUrl = sport.PhotoUrl,
-                };
+            //    var dto = new SportDto
+            //    {
+            //        Id = sport.Id,
+            //        Name = sport.Name,
+            //        PhotoUrl = sport.PhotoUrl,
+            //    };
 
-                sportDtos.Add(dto);
-            }
-            return sportDtos;
+            //    sportDtos.Add(dto);
+            //}
+            //return sportDtos;
+            return sportsMap;
         }
 
         public async Task<List<Title>> GetTitlesByDog(int dogId)
@@ -97,7 +105,12 @@ namespace RealPetApi.Repositories
             return photoDtos;
         }
 
-        
+        public async Task<bool> AddSportsToDog(DogSport dogsport)
+        {
+            await _context.DogSports.AddAsync(dogsport);
+            var created = await _context.SaveChangesAsync();
+            return created > 0;
+        }
     }
 }
 

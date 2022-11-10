@@ -144,6 +144,9 @@ namespace RealPetApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SportId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titles")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -159,6 +162,8 @@ namespace RealPetApi.Migrations
                     b.HasIndex("BreedId");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("SportId");
 
                     b.HasIndex("UserProfileId");
 
@@ -481,6 +486,10 @@ namespace RealPetApi.Migrations
                         .WithMany("Dogs")
                         .HasForeignKey("LocationId");
 
+                    b.HasOne("RealPetApi.Models.Sport", null)
+                        .WithMany("Dogs")
+                        .HasForeignKey("SportId");
+
                     b.HasOne("RealPetApi.Models.UserProfile", "UserProfile")
                         .WithMany("Dogs")
                         .HasForeignKey("UserProfileId")
@@ -640,6 +649,8 @@ namespace RealPetApi.Migrations
                     b.Navigation("ClubSports");
 
                     b.Navigation("DogSports");
+
+                    b.Navigation("Dogs");
 
                     b.Navigation("HandlerSports");
                 });

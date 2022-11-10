@@ -12,8 +12,8 @@ using RealPetApi.Data;
 namespace RealPetApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221104210527_removelocationdog")]
-    partial class removelocationdog
+    [Migration("20221110184534_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -146,6 +146,13 @@ namespace RealPetApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SportId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("UserProfileId")
                         .HasColumnType("int");
 
@@ -157,6 +164,8 @@ namespace RealPetApi.Migrations
                     b.HasIndex("BreedId");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("SportId");
 
                     b.HasIndex("UserProfileId");
 
@@ -348,6 +357,9 @@ namespace RealPetApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("DogId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -475,6 +487,10 @@ namespace RealPetApi.Migrations
                     b.HasOne("RealPetApi.Models.Location", null)
                         .WithMany("Dogs")
                         .HasForeignKey("LocationId");
+
+                    b.HasOne("RealPetApi.Models.Sport", null)
+                        .WithMany("Dogs")
+                        .HasForeignKey("SportId");
 
                     b.HasOne("RealPetApi.Models.UserProfile", "UserProfile")
                         .WithMany("Dogs")
@@ -635,6 +651,8 @@ namespace RealPetApi.Migrations
                     b.Navigation("ClubSports");
 
                     b.Navigation("DogSports");
+
+                    b.Navigation("Dogs");
 
                     b.Navigation("HandlerSports");
                 });

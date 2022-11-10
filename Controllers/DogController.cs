@@ -36,10 +36,10 @@ namespace RealPetApi.Controllers
 
             )
         {
-           _dogRepository = dogRepository;
+            _dogRepository = dogRepository;
             _mapper = mapper;
-           _locationRepository = locationRepository;
-           _breedRepository = breedRepository;
+            _locationRepository = locationRepository;
+            _breedRepository = breedRepository;
             _handlerRepository = handlerRepository;
             _uploadService = uploadService;
             _dogPhotoRepository = dogPhotoRepository;
@@ -57,11 +57,21 @@ namespace RealPetApi.Controllers
 
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return NotFound();
+
 
             return Ok(dogsToReturn);
         }
 
+        [HttpGet("sports/{dogId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SportDto>))]
+
+        public async Task<ActionResult<SportDto>> GetSportsByDog(int dogId)
+        {
+            var sports = await _dogRepository.GetSportsByDog(dogId);
+
+            return Ok(sports);
+        }
 
         [HttpGet("{dogId}")]
         [ProducesResponseType(200, Type = typeof(Dog))]
@@ -159,10 +169,10 @@ namespace RealPetApi.Controllers
         }
 
         [HttpPost("{dogId}/addsport")]
-        public async Task<ActionResult<Sport>> AddSport(int dogId, SportDto sportCreate)
+        public async Task<ActionResult<Sport>> AddSport(int dogId, [FromQuery] int sportsId)
         {
             var dog = await _dogRepository.GetDog(dogId);
-            var sport = await _sportRepository.GetSport(sportCreate.Id);
+            var sport = await _sportRepository.GetSport(sportsId);
 
             var newSport = new DogSport
             {
@@ -170,9 +180,10 @@ namespace RealPetApi.Controllers
                 SportId = sport.Id
             };
 
-            dog.DogSports.Add(newSport);
+            await _dogRepository.AddSportsToDog(newSport);
+          
 
-            return Ok();
+            return Ok("New DogSport added successfully");
 
         }
 
