@@ -9,10 +9,13 @@ namespace RealPetApi.Repositories
     public class ClubRepository : IClubRepository
     {
         private readonly DataContext _context;
+        private readonly ISportRepository _sportsRepository;
 
-        public ClubRepository(DataContext context)
+        public ClubRepository(DataContext context,
+            ISportRepository sportsRepository)
         {
             _context = context;
+            _sportsRepository = sportsRepository;
         }
 
         public bool ClubExists(int id)
@@ -48,7 +51,9 @@ namespace RealPetApi.Repositories
 
         public async Task<Club> GetClub(int id)
         {
-            return await _context.Clubs.FirstOrDefaultAsync(c => c.Id == id);      
+            return await _context.Clubs.Where(c => c.Id == id)
+                .Include(c => c.Location)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Club>> GetClubs()
@@ -57,6 +62,8 @@ namespace RealPetApi.Repositories
                 .Include(c => c.Location)
                 .ToListAsync();
         }
+
+        
 
         public async Task<List<ClubDto>> GetClubDtos()
         {

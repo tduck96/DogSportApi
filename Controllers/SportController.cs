@@ -63,12 +63,12 @@ namespace RealPetApi.Controllers
             {
                 var clubs = await _sportRepository.GetClubsBySport(sportId);
             
-                 var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
+                var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                return Ok(clubsToReturn);
+                return Ok(clubs);
             }
 
         [HttpGet("user/{sportId}")]

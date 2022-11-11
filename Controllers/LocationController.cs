@@ -66,9 +66,7 @@ namespace RealPetApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
-
-            return Ok(clubsToReturn);
+            return Ok(clubs);
         }
 
         [HttpGet("handlers/{locationId}")]

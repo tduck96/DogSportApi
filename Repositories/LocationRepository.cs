@@ -29,10 +29,31 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        public async Task<List<Club>> GetClubsByLocation(int locationId)
+        public async Task<List<ClubDto>> GetClubsByLocation(int locationId)
         {
-            return await _context.Clubs.Where(c => c.LocationId == locationId).ToListAsync();
-            
+           var clubs = await _context.Clubs
+                .Where(c => c.LocationId == locationId)
+                .ToListAsync();
+
+            List<ClubDto> Dtos = new List<ClubDto>();
+
+            foreach (Club club in clubs)
+            {
+                var location = await GetLocation(locationId);
+
+                var dto = new ClubDto
+                {
+                    Id = club.Id,
+                    Founded = club.Founded,
+                    Name = club.Name,
+                    About = club.About,
+                    Location = location.Name,
+                    PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668193137/Screen_Shot_2022-11-11_at_12.58.24_PM_nsq3za.png"
+                };
+
+                Dtos.Add(dto);
+            }
+            return Dtos;
         }
 
        

@@ -1,4 +1,5 @@
 ﻿using System;
+using RealPetApi.Dtos;
 using RealPetApi.Models;
 
 namespace RealPetApi.Repositories
@@ -6,10 +7,14 @@ namespace RealPetApi.Repositories
     public class SportRepository : ISportRepository
     {
         private readonly DataContext _context;
+        private readonly ILocationRepository _locationRepository;
 
-        public SportRepository(DataContext context)
+        public SportRepository(DataContext context,
+            ILocationRepository locationRepository
+            )
         {
             _context = context;
+            _locationRepository = locationRepository;
         }
 
         public async Task<ICollection<Sport>> GetSports()
@@ -28,10 +33,37 @@ namespace RealPetApi.Repositories
             return await _context.DogSports.Where(e => e.SportId == sportId).Select(c => c.Dog).ToListAsync();
         }
 
-        public async Task<ICollection<Club>> GetClubsBySport(int sportId)
+        public  async Task<List<ClubDto>> GetClubsBySport(int sportId)
         {
-            return await _context.ClubSports.Where(c => c.SportId == sportId).Select(c => c.Club).ToListAsync();
+           var clubs =  await _context.ClubSports
+                .Where(c => c.SportId == sportId)
+                .Select(c => c.Club)
+                .ToListAsync();
+
+            List<ClubDto> Dtos = new List<ClubDto>();
+
+            foreach (Club club in clubs)
+            {
+                var clubLocation = await _locationRepository.GetLocation(club.Id);
+
+                var dto = new ClubDto
+                {
+                    Id = club.Id,
+                    Founded = club.Founded,
+                    Name = club.Name,
+                    About = club.About,
+                    Location = clubLocation.Name,
+                    PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668193137/Screen_Shot_2022-11-11_at_12.58.24_PM_nsq3za.png"
+
+                };
+                Dtos.Add(dto);
+            }
+            return Dtos;
+
         }
+
+        
+
 
         public async Task<bool> CreateSport(Sport sportToCreate)
         {

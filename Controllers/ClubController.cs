@@ -47,25 +47,25 @@ namespace RealPetApi.Data
         public async Task<ActionResult<ClubDto>> GetClub(int clubId)
         {
             var club = await _clubRepository.GetClub(clubId);
-            var location = await _locationRepository.GetLocation(club.LocationId);
-            var sports = await _clubRepository.GetSportsByClub(clubId);
 
-            var sportsMap = _mapper.Map<List<SportDto>>(sports);
+            if (club == null)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
 
             var clubDto = new ClubDto
             {
                 Id = club.Id,
                 Name = club.Name,
                 About = "We are a dog training facility!",
+                Location = club.Location.Name,
+                PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668193137/Screen_Shot_2022-11-11_at_12.58.24_PM_nsq3za.png",
                 Founded = 2015,
-           
+ 
             };
-                
-
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+      
             return Ok(clubDto);
         }
 
@@ -75,7 +75,7 @@ namespace RealPetApi.Data
 
         public async Task<ActionResult<SportDto>> GetSportsByClub(int clubId)
         {
-            var club = await _clubRepository.GetClub(clubId);
+            var club = await _clubRepository.GetSportsByClub(clubId);
             if (club == null)
                 return NotFound();
 
@@ -88,6 +88,8 @@ namespace RealPetApi.Data
 
             return Ok(sportsToReturn);
         }
+
+       
 
         [HttpPost]
         [ProducesResponseType(204)]
