@@ -8,7 +8,5 @@ namespace RealPetApi.Interfaces
         Task<Photo> GetPhoto(int photoId);
         Task<bool> AddPhoto(Photo photoToAdd);
         Task<bool> DeletePhoto(int photoId);
-        Task<bool> UpdatePhoto(Photo photoToUpdate);
     }
 }
-

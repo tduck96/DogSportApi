@@ -57,7 +57,10 @@ namespace RealPetApi.Repositories
 
         public async Task<ICollection<UserProfile>> GetUsersBySport(int sportId)
         {
-            return await _context.HandlerSports.Where(e => e.SportId == sportId).Select(c => c.UserProfile).ToListAsync();
+            return await _context.HandlerSports
+                .Where(e => e.SportId == sportId)
+                .Select(c => c.UserProfile)
+                .ToListAsync();
         }
     }
 }

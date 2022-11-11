@@ -2,6 +2,7 @@
 using RealPetApi.Dtos;
 using RealPetApi.Interfaces;
 using RealPetApi.Models;
+using static System.Net.WebRequestMethods;
 
 namespace RealPetApi.Repositories
 {
@@ -52,7 +53,35 @@ namespace RealPetApi.Repositories
 
         public async Task<IEnumerable<Club>> GetClubs()
         {
-            return await _context.Clubs.ToListAsync();
+            return await _context.Clubs
+                .Include(c => c.Location)
+                .ToListAsync();
+        }
+
+        public async Task<List<ClubDto>> GetClubDtos()
+        {
+            var clubs = await GetClubs();
+
+            List<ClubDto> Dtos = new List<ClubDto>();
+
+            foreach (Club club in clubs)
+            {
+
+                var dto = new ClubDto
+                {
+                    Id = club.Id,
+                    Founded = club.Founded,
+                    Name = club.Name,
+                    Location = club.Location.Name,
+                    PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668193137/Screen_Shot_2022-11-11_at_12.58.24_PM_nsq3za.png"
+
+                };
+
+                Dtos.Add(dto);
+            }
+            return Dtos;
+
+
         }
 
         public async  Task<bool> UpdateClub(Club clubToUpdate)

@@ -8,6 +8,8 @@ namespace RealPetApi.Interfaces
     {
         Task<IEnumerable<Club>> GetClubs();
 
+        Task<List<ClubDto>> GetClubDtos();
+
         Task<Club> GetClub(int id);
 
         Task<List<Sport>> GetSportsByClub(int clubId);

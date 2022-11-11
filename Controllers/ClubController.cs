@@ -30,13 +30,12 @@ namespace RealPetApi.Data
 
         public async Task<ActionResult<ClubDto>> GetClubs()
         {
-            var clubs = await _clubRepository.GetClubs();
-            var clubsToReturn = _mapper.Map<List<ClubDto>>(clubs);
-
+            var clubs = await _clubRepository.GetClubDtos();
+           
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(clubsToReturn);
+            return Ok(clubs);
 
 
         }
@@ -59,8 +58,7 @@ namespace RealPetApi.Data
                 Name = club.Name,
                 About = "We are a dog training facility!",
                 Founded = 2015,
-                location = location.Name,
-                Sports = sportsMap
+           
             };
                 
 
@@ -133,8 +131,7 @@ namespace RealPetApi.Data
             var club = new Club
             {
                 Id = request.Id,
-                Name = request.Name,
-                LocationId = request.LocationId
+                Name = request.Name
             };
 
             var updatedClub = await _clubRepository.UpdateClub(club);

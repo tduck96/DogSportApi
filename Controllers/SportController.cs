@@ -71,9 +71,25 @@ namespace RealPetApi.Controllers
                 return Ok(clubsToReturn);
             }
 
-           
+        [HttpGet("user/{sportId}")]
+        [ProducesResponseType(200, Type = typeof(Club))]
+        [ProducesResponseType(400)]
 
-            [HttpGet("dogs/{sportId}")]
+        public async Task<ActionResult<List<ClubDto>>> GetUsersBySport(int sportId)
+        {
+            var users = await _sportRepository.GetUsersBySport(sportId);
+
+            var usersToReturn = _mapper.Map<List<UserListDto>>(users);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(usersToReturn);
+        }
+
+
+
+        [HttpGet("dogs/{sportId}")]
             [ProducesResponseType(200, Type = typeof(Dog))]
             [ProducesResponseType(400)]
 
