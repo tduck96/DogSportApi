@@ -115,7 +115,20 @@ namespace RealPetApi.Repositories
             return await _context.HandlerSports.Where(c => c.UserProfileId == id).Select(c => c.Sport).ToListAsync();
         }
 
-      
+        public async Task<bool> RemoveUserSport(HandlerSport handler)
+        { 
+
+             _context.HandlerSports.Remove(handler);
+            var deleted = await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<HandlerSport> GetHandlerSport(int userId, int sportId)
+        {
+            return await _context.HandlerSports
+                .Where(c => c.UserProfileId == userId && c.SportId == sportId)
+                .FirstOrDefaultAsync();
+        }
     }
 }
 

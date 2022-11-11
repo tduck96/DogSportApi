@@ -103,6 +103,7 @@ namespace RealPetApi.Controllers
                 return BadRequest(ModelState);
 
             var sportMap = _mapper.Map<Sport>(sportCreate);
+            sportMap.PhotoUrl = "https://res.cloudinary.com/dx58mbwcg/image/upload/v1668129584/Screen_Shot_2022-11-10_at_7.18.31_PM_imj6c6.png";
 
             await _sportRepository.CreateSport(sportMap);
 

@@ -176,7 +176,7 @@ namespace RealPetApi.Controllers
 
         }
 
-        [HttpGet("/{userId}/sports")]
+        [HttpGet("{userId}/sports")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<SportDto>))]
 
         public async Task<ActionResult<SportDto>> GetSportsByUser(int userId)
@@ -186,6 +186,19 @@ namespace RealPetApi.Controllers
             var sportsMap = _mapper.Map<List<SportDto>>(sports);
 
             return Ok(sportsMap);
+        }
+
+        [HttpDelete("deletesport/{userId}")]
+
+        public async Task<ActionResult<bool>> DeleteSport(int userId, [FromQuery] int sportId)
+        {
+            var sport = await _userProfileRespository.GetHandlerSport(userId, sportId);
+
+            var deleted = await _userProfileRespository.RemoveUserSport(sport);
+            if (deleted)
+                return Ok("Sport deleted from User Files");
+
+            return NotFound();
         }
 
     }
