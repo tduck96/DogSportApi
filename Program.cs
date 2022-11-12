@@ -62,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
-    build.WithOrigins("https://dogsportclient-obxitfzea-tduck96.vercel.app/").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+    build.WithOrigins("https://dogsportclient-obxitfzea-tduck96.vercel.app").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
 
 }));
 
