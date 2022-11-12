@@ -2,6 +2,7 @@
 global using RealPetApi.Data;
 global using RealPetApi.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
 using RealPetApi.Repositories;
 using RealPetApi.Services;
@@ -72,12 +73,18 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
     app.UseSwagger();
     app.UseSwaggerUI();
+
+var option = new RewriteOptions();
+option.AddRedirect("^$", "swagger");
+app.UseRewriter(option);
 
 
 app.UseCors("corspolicy");
@@ -88,7 +95,10 @@ app.UseAuthorization();
 
 app.UseAuthentication();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
 
