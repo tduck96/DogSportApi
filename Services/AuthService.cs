@@ -230,8 +230,9 @@ namespace RealPetApi.Services
                 IsEssential = true,
                 HttpOnly = true,
                 Expires = refreshToken.Expires,
-                Secure = false,
+                Secure = true,
                 SameSite = SameSiteMode.None
+
 
             };
 
