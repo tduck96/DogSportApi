@@ -145,7 +145,8 @@ namespace RealPetApi.Controllers
                 Name = user.Name,
                 Bio = user.Bio,
                 LocationId = user.LocationId,
-                HandlerId = user.HandlerId
+                HandlerId = user.HandlerId,
+                PhotoUrl = user.PhotoUrl
 
             };
 
