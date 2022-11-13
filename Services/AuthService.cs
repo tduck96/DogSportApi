@@ -227,6 +227,7 @@ namespace RealPetApi.Services
             var cookieOptions = new CookieOptions
             {
                 Path = "/",
+                Domain = "goodsportruff.com",
                 IsEssential = true,
                 HttpOnly = true,
                 Expires = refreshToken.Expires,
@@ -251,6 +252,7 @@ namespace RealPetApi.Services
             var cookieOptions = new CookieOptions
             {
                 Path = "/",
+                Domain = "goodsportruff.com",
                 IsEssential = true,
                 HttpOnly = true,
                 Secure = false
