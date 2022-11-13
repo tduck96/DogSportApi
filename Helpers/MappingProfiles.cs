@@ -15,6 +15,9 @@ namespace RealPetApi.Helpers
             CreateMap<Club, ClubDto>();
             CreateMap<ClubDto, Club>();
 
+            CreateMap<Club, ClubCreateDto>();
+            CreateMap<ClubCreateDto, Club>();
+
             CreateMap<Dog, DogDto>();
             CreateMap<DogDto, Dog>();
 

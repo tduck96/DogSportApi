@@ -230,8 +230,9 @@ namespace RealPetApi.Services
                 IsEssential = true,
                 HttpOnly = true,
                 Expires = refreshToken.Expires,
-                Secure = true,
-                SameSite = SameSiteMode.None
+                //Secure = true,
+                Secure = false,
+                //SameSite = SameSiteMode.None
 
 
             };
@@ -254,8 +255,9 @@ namespace RealPetApi.Services
                 Path = "/",
                 IsEssential = true,
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None
+                //Secure = true,
+                Secure = false,
+                //SameSite = SameSiteMode.None
             };
 
             _httpContextAccessor?.HttpContext?.Response

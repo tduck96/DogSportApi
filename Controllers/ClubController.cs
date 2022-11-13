@@ -95,25 +95,14 @@ namespace RealPetApi.Data
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public async Task<ActionResult<Club>> CreateClub([FromQuery] int locationId , [FromBody] ClubDto clubCreate)
+        public async Task<ActionResult<ClubCreateDto>> CreateClub([FromBody] ClubCreateDto clubCreate)
         {
             if (clubCreate == null)
                 return BadRequest(ModelState);
 
-            var club = await _clubRepository.GetClub(clubCreate.Id);
-
-            if (club != null)
-            {
-                ModelState.AddModelError("", "Club Already Exists");
-                    return StatusCode(422, ModelState);
-            }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var clubMap = _mapper.Map<Club>(clubCreate);
 
-            clubMap.Location = await _locationRepository.GetLocation(locationId);
+            clubMap.Location = await _locationRepository.GetLocation(clubCreate.LocationId);
 
             await _clubRepository.CreateClub(clubMap);
 
