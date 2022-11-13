@@ -255,7 +255,7 @@ namespace RealPetApi.Services
                 Path = "/",
                 IsEssential = true,
                 HttpOnly = true,
-                Secure = false,
+                Secure = true,
                 SameSite = SameSiteMode.None
             };
 
