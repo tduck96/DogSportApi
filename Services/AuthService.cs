@@ -247,7 +247,6 @@ namespace RealPetApi.Services
 
         }
 
-       
         private async Task LogoutUser(Handler handler)
         {
             var cookieOptions = new CookieOptions
