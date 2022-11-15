@@ -34,7 +34,7 @@ namespace RealPetApi.Services
 
             if (regex == false) return new AuthResponseDto { Message = "Please enter a valid email" };
 
-            else if (request.Password.Length < 7) return new AuthResponseDto { Message = "Password must contain at least 7 characters." };
+            if (request.Password.Length < 7) return new AuthResponseDto { Message = "Password must contain at least 7 characters." };
 
             var user = await _context.Handlers.FirstOrDefaultAsync(h => h.Email == request.Email);
 
