@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Tokens;
 using RealPetApi.Dtos;
 using RealPetApi.Models;
@@ -28,9 +30,15 @@ namespace RealPetApi.Services
 
         public async Task<AuthResponseDto> RegisterUser(AuthHandlerDto request)
         {
+            var regex = IsValidEmail(request.Email);
+
+            if (regex == false) return new AuthResponseDto { Message = "Please enter a valid email" };
+
+            else if (request.Password.Length < 7) return new AuthResponseDto { Message = "Password must contain at least 7 characters." };
+
             var user = await _context.Handlers.FirstOrDefaultAsync(h => h.Email == request.Email);
 
-            if (user != null)
+             if (user != null)
             {
                 return new AuthResponseDto {
                     Success = false,
@@ -73,24 +81,22 @@ namespace RealPetApi.Services
 
         public async Task<AuthResponseDto> LoginUser(AuthHandlerDto request)
         {
+            var user = await _context.Handlers.Where(c => c.Email == request.Email).FirstOrDefaultAsync();
 
-            var user = await _context.Handlers.FirstOrDefaultAsync(u => u.Email == request.Email);
-            var profile = await _context.UserProfiles.Where(c => c.HandlerId == user.Id).FirstOrDefaultAsync();
-      
-            if (user == null)
-            {
-                return new AuthResponseDto { Message = "Invalid Username" };
+            if (user == null) return new AuthResponseDto { Message = "No account found with that username" };
 
-            }
 
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
                 return new AuthResponseDto { Message = "Invalid password" };
             }
 
+            var profile = await _context.UserProfiles.Where(c => c.HandlerId == user.Id).FirstOrDefaultAsync();
+
             string token = CreateToken(user);
            
             var refreshToken = CreateRefreshToken();
+
             await SetRefreshToken(refreshToken, user);
 
 
@@ -265,6 +271,50 @@ namespace RealPetApi.Services
 
 
             await _context.SaveChangesAsync();
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                // Normalize the domain
+                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                // Examines the domain part of the email and normalizes it.
+                string DomainMapper(Match match)
+                {
+                    // Use IdnMapping class to convert Unicode domain names.
+                    var idn = new IdnMapping();
+
+                    // Pull out and process domain name (throws ArgumentException on invalid)
+                    string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                    return match.Groups[1].Value + domainName;
+                }
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                return false;
+            }
+            catch (ArgumentException e)
+            {
+                return false;
+            }
+
+            try
+            {
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return false;
+            }
         }
 
     }

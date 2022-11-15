@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://goodsportruff.azurewebsites.net/",
+      "applicationUrl": "https://goodsportruff.azurewebsites.net",
       "sslPort": 44371
     }
   },
