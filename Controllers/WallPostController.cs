@@ -34,21 +34,17 @@ namespace RealPetApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPost>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPostDto>))]
 
         public async Task<ActionResult<WallPostDto>> GetWallPosts()
         {
             var wallPosts = await _wallPostRepository.GetWallPosts();
 
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(wallPosts);
         }
 
         [HttpGet("{wallpostId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPost>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPostDto>))]
 
         public async Task<ActionResult<WallPostDto>> GetWallPost(int wallpostId)
         {

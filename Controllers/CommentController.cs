@@ -38,9 +38,6 @@ namespace RealPetApi.Controllers
             var comment = await _commentRepository.GetComment(commentId);
             var commentToReturn = _mapper.Map<CommentDto>(comment);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(commentToReturn);
 
         }

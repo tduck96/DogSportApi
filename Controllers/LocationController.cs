@@ -22,21 +22,18 @@ namespace RealPetApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Location>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LocationDto>))]
 
         public async Task<ActionResult<List<LocationDto>>> GetLocations()
         {
             var locations = await _locationRepository.GetLocations();
             var locationsToReturn = _mapper.Map<List<LocationDto>>(locations);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(locationsToReturn);
         }
 
         [HttpGet("{locationId}")]
-        [ProducesResponseType(200, Type = typeof(Location))]
+        [ProducesResponseType(200, Type = typeof(LocationDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult> GetLocation(int locationId)
@@ -45,16 +42,13 @@ namespace RealPetApi.Controllers
             if (location == null)
                 return NotFound();
 
-            var locationToReturn = _mapper.Map<LocationDto>(location);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var locationToReturn = _mapper.Map<LocationDto>(location);    
 
             return Ok(locationToReturn);
         }
 
         [HttpGet("clubs/{locationId}")]
-        [ProducesResponseType(200, Type = typeof(Club))]
+        [ProducesResponseType(200, Type = typeof(ClubDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<List<ClubDto>>> GetClubsByLocation(int locationId)
@@ -62,9 +56,6 @@ namespace RealPetApi.Controllers
             var clubs = await _locationRepository.GetClubsByLocation(locationId);
             if (clubs == null)
                 return NotFound("No clubs currently available in that location");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             return Ok(clubs);
         }
@@ -79,9 +70,6 @@ namespace RealPetApi.Controllers
 
             if (users == null)
                 return NotFound("No users currently available in that location");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             var usersToReturn = _mapper.Map<List<UserListDto>>(users);
 

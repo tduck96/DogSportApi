@@ -26,7 +26,7 @@ namespace RealPetApi.Data
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Club>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ClubDto>))]
 
         public async Task<ActionResult<ClubDto>> GetClubs()
         {
@@ -41,7 +41,7 @@ namespace RealPetApi.Data
         }
 
         [HttpGet("{clubId}")]
-        [ProducesResponseType(200, Type = typeof(Club))]
+        [ProducesResponseType(200, Type = typeof(ClubDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<ClubDto>> GetClub(int clubId)
@@ -50,9 +50,6 @@ namespace RealPetApi.Data
 
             if (club == null)
                 return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
 
             var clubDto = new ClubDto
@@ -70,7 +67,7 @@ namespace RealPetApi.Data
         }
 
         [HttpGet("sports/{clubId}")]
-        [ProducesResponseType(200, Type = typeof(Sport))]
+        [ProducesResponseType(200, Type = typeof(SportDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<SportDto>> GetSportsByClub(int clubId)
@@ -83,8 +80,6 @@ namespace RealPetApi.Data
 
             var sportsToReturn = _mapper.Map<List<SportDto>>(sports);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             return Ok(sportsToReturn);
         }

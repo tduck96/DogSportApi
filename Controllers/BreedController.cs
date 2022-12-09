@@ -24,7 +24,7 @@ namespace RealPetApi.Controllers
 
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Breed>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BreedDto>))]
 
         public async Task<ActionResult<BreedDto>> GetBreeds()
         {
@@ -40,7 +40,7 @@ namespace RealPetApi.Controllers
 
 
         [HttpGet("{breedId}")]
-        [ProducesResponseType(200, Type = typeof(Breed))]
+        [ProducesResponseType(200, Type = typeof(BreedDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<BreedDto>> GetBreed(int breedId)

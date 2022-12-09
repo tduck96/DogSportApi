@@ -64,7 +64,7 @@ namespace RealPetApi.Controllers
 
         
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(UserProfile))]
+        [ProducesResponseType(200, Type = typeof(UserListDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<UserListDto>> GetUsers()
@@ -73,17 +73,13 @@ namespace RealPetApi.Controllers
             if (users == null)
                 return NotFound();
 
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(users);
 
         }
 
         
         [HttpGet("profile/{handlerId}")]
-        [ProducesResponseType(200, Type = typeof(UserProfile))]
+        [ProducesResponseType(200, Type = typeof(HandlerProfileDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<HandlerProfileDto>> GetUserProfile(int handlerId)
@@ -109,7 +105,7 @@ namespace RealPetApi.Controllers
 
 
         [HttpGet("{userId}")]
-        [ProducesResponseType(200, Type = typeof(UserProfile))]
+        [ProducesResponseType(200, Type = typeof(HandlerProfileDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<HandlerProfileDto>> GetUser(int userId)

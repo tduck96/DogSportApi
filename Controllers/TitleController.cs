@@ -50,9 +50,6 @@ namespace RealPetApi.Controllers
 
             var titleToReturn = _mapper.Map<TitleDto>(title);
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok(titleToReturn);
 
         }

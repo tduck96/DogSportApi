@@ -48,7 +48,7 @@ namespace RealPetApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Dog>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DogDto>))]
 
         public async Task<ActionResult<DogDto>> GetDogs()
         {
@@ -74,7 +74,7 @@ namespace RealPetApi.Controllers
         }
 
         [HttpGet("{dogId}")]
-        [ProducesResponseType(200, Type = typeof(Dog))]
+        [ProducesResponseType(200, Type = typeof(DogProfileDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<DogProfileDto>> GetDog(int dogId)
@@ -209,9 +209,6 @@ namespace RealPetApi.Controllers
         public async Task<ActionResult<bool>> UploadPhoto(IFormFile file)
         {
             var result = await _uploadService.AddPhotoAsync(file);
-
-            //if (result.Error != null) return BadRequest(result.Error.Message);
-
 
             var photo = new DogPhoto
             {
