@@ -129,6 +129,54 @@ namespace RealPetApi.Repositories
                 .Where(c => c.UserProfileId == userId && c.SportId == sportId)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<bool> FollowUser(UserFollowing user)
+        {
+            await _context.UserFollowing.AddAsync(user);
+            var created = await _context.SaveChangesAsync();
+
+            return created > 0;
+        }
+
+
+        public async Task<bool> UnfollowUser(int userId, int followId)
+        {
+            var follower = await GetFollower(userId, followId);
+
+            _context.UserFollowing.Remove(follower);
+
+            var deleted = await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<List<UserProfile>> GetUserFollowing(int userId)
+        {
+            var following = await _context.UserFollowing
+               .Where(c => c.UserProfileId == userId)
+               .Select(c => c.UserFollows)
+               .ToListAsync();
+
+            return following;
+
+        }
+
+        public async Task<bool> FollowChecker(int userId, int followingId)
+        {
+            var result = await _context.UserFollowing.Where(c => c.UserProfileId == userId && c.UserFollowsId == followingId).FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<UserFollowing> GetFollower(int userId, int followId)
+        {
+            return await _context.UserFollowing.Where(c => c.UserProfileId == userId && c.UserFollowsId == followId).FirstOrDefaultAsync();
+        }
     }
 }
 

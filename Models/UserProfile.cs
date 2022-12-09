@@ -17,6 +17,10 @@ namespace RealPetApi.Models
         public Location? Location { get; set; }
         public ICollection<HandlerSport> HandlerSports { get; set; }
 
+        public ICollection<UserFollowing>?UserFollowing { get; set; }
+        public ICollection<UserFollowing> ?Followers { get; set; }
+
+
     }
 }
 

@@ -18,6 +18,12 @@ namespace RealPetApi.Interfaces
         Task<List<DogDtoForUserProfile>> GetDogsByUser(int userId);
         Task<List<WallPostProfileDto>> GetWallPostsByUser(int userId);
         Task<List<PhotoDto>> GetPhotosByUser(int userId);
+
+        Task<UserFollowing> GetFollower(int userId, int followId);
+        Task<bool> FollowUser(UserFollowing user);
+        Task<bool> UnfollowUser(int userId, int followId);
+        Task<bool> FollowChecker(int userId, int followingId);
+        Task<List<UserProfile>> GetUserFollowing(int userId);
     }
 }
 

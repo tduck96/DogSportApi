@@ -29,6 +29,7 @@ namespace RealPetApi.Data
         public DbSet<Photo> Photos { get; set; }
         public DbSet<DogPhoto> DogPhotos { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserFollowing> UserFollowing { get; set; }
 
 
 
@@ -78,6 +79,18 @@ namespace RealPetApi.Data
                 .HasOne(p => p.Title)
                 .WithMany(pc => pc.DogTitles)
                 .HasForeignKey(c => c.TitleId);
+
+            modelBuilder.Entity<UserFollowing>()
+              .HasKey(po => new { po.UserProfileId, po.UserFollowsId });
+            modelBuilder.Entity<UserFollowing>()
+                .HasOne(p => p.UserProfile)
+                .WithMany(pc => pc.UserFollowing)
+                .HasForeignKey(p => p.UserProfileId);
+
+            modelBuilder.Entity<UserFollowing>()
+                .HasOne(p => p.UserFollows)
+                .WithMany(pc => pc.Followers)
+                .HasForeignKey(c => c.UserFollowsId);
         }
     }
 }

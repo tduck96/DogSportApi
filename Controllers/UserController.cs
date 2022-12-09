@@ -202,6 +202,67 @@ namespace RealPetApi.Controllers
             return NotFound();
         }
 
+        [HttpPost("{userId}/follow")]
+        public async Task<ActionResult<bool>> FollowUser(int userId, [FromBody] FollowDto follow)
+        {
+            UserFollowing follower = new UserFollowing
+            {
+                UserProfileId = follow.UserProfileId,
+                UserFollowsId = follow.FollowId
+            };
+
+            var result = await _userProfileRespository.FollowUser(follower);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("unfollow/{followId}")]
+        public async Task<ActionResult<bool>> UnfollowUser(int userId, int followId)
+        {
+            var result = await _userProfileRespository.GetFollower(userId, followId);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                var deleted = await _userProfileRespository.UnfollowUser(userId, followId);
+
+                return Ok("Sucessfully Deleted");
+
+            }
+
+        }
+        [HttpGet("following/{userId}")]
+        public async Task<ActionResult<List<UserListDto>>> GetFollowing(int userId)
+        {
+            var result = await _userProfileRespository.GetUserFollowing(userId);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                var followMap = _mapper.Map<List<UserListDto>>(result);
+
+                return Ok(followMap);
+            }
+        }
+
+        [HttpGet("IsFollowing")]
+        public async Task<ActionResult<bool>> StatusChecker(int userId, int followingId)
+        {
+            var result = await _userProfileRespository.FollowChecker(userId, followingId);
+
+            return result;
+
+
+        }
+
     }
 }
 
