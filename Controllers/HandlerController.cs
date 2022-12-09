@@ -41,7 +41,7 @@ namespace RealPetApi.Controllers
         }
 
         [HttpGet("{handlerId}")]
-        [ProducesResponseType(200, Type = typeof(Handler))]
+        [ProducesResponseType(200, Type = typeof(HandlerDto))]
         [ProducesResponseType(400)]
 
         public async Task<ActionResult<HandlerDto>> GetHandler(int handlerId)

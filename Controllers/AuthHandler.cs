@@ -41,9 +41,6 @@ namespace RealPetApi.Controllers
             var response = await _authService.LoginUser(request);
 
                 return Ok(response);
-
-            
-
         }
 
         [HttpPost("refresh-token")]
