@@ -7,7 +7,7 @@ namespace RealPetApi.Interfaces
     public interface IUserProfileRespository
     {
         Task<UserProfile> GetUser(int userId);
-        Task<List<UserListDto>> GetUsers();
+        Task<IEnumerable<UserListDto>> GetUsers();
         Task<bool> UpdateUserInfo(UserProfile user);
         Task<bool> CreateUser(UserProfile user);
         Task<bool> AddUserSport(HandlerSport sport);
