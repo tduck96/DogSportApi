@@ -56,7 +56,8 @@ namespace RealPetApi.Repositories
                     Name = result.userprofile.Name,
                     PhotoUrl = result.userfollowingpost.wallpost.PhotoUrl,
                     UserPhotoUrl = result.userprofile.PhotoUrl,
-                    Date = result.userfollowingpost.wallpost.Date
+                    Date = result.userfollowingpost.wallpost.Date,
+                    UserId = result.userprofile.Id
 
                 })
 
