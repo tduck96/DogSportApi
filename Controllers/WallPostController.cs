@@ -43,6 +43,20 @@ namespace RealPetApi.Controllers
             return Ok(wallPosts);
         }
 
+        [HttpGet("following/{userId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPostProfileDto>))]
+
+        public async Task<ActionResult<WallPostProfileDto>> GetFollowingWallposts(int userId)
+        {
+            var wallPosts = await _wallPostRepository.GetFollowerWallposts(userId);
+
+            if (wallPosts == null)
+                return NotFound();
+
+            return Ok(wallPosts);
+        }
+
+
         [HttpGet("{wallpostId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<WallPostDto>))]
 
