@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RealPetApi.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initalcreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -247,6 +247,30 @@ namespace RealPetApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserFollowing",
+                columns: table => new
+                {
+                    UserProfileId = table.Column<int>(type: "int", nullable: false),
+                    UserFollowsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFollowing", x => new { x.UserProfileId, x.UserFollowsId });
+                    table.ForeignKey(
+                        name: "FK_UserFollowing_UserProfiles_UserFollowsId",
+                        column: x => x.UserFollowsId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserFollowing_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wallposts",
                 columns: table => new
                 {
@@ -254,6 +278,7 @@ namespace RealPetApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserProfileId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -429,6 +454,11 @@ namespace RealPetApi.Migrations
                 column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserFollowing_UserFollowsId",
+                table: "UserFollowing",
+                column: "UserFollowsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserProfiles_HandlerId",
                 table: "UserProfiles",
                 column: "HandlerId",
@@ -467,6 +497,9 @@ namespace RealPetApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Photos");
+
+            migrationBuilder.DropTable(
+                name: "UserFollowing");
 
             migrationBuilder.DropTable(
                 name: "Clubs");

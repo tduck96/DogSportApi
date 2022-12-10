@@ -67,6 +67,7 @@ namespace RealPetApi.Controllers
                 Id = commentCreate.Id,
                 Body = commentCreate.Body,
                 WriterPhotoUrl = user.PhotoUrl,
+                Date = DateTime.Now,
                 WriterName = user.Name,
                 UserProfileId = userProfileId,
                 WallPostId = wallPostID,
@@ -103,6 +104,7 @@ namespace RealPetApi.Controllers
             {
                 Id = request.Id,
                 Body = request.Body,
+                Date = DateTime.Now,
                 UserProfileId = userId,
                 UserProfile = userProfile,
                 WallPostId = wallpostId,

@@ -12,8 +12,8 @@ using RealPetApi.Data;
 namespace RealPetApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221112013528_whatthe")]
-    partial class whatthe
+    [Migration("20221210030020_initialcreate")]
+    partial class initialcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -369,6 +369,21 @@ namespace RealPetApi.Migrations
                     b.ToTable("Titles");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.UserFollowing", b =>
+                {
+                    b.Property<int?>("UserProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserFollowsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserProfileId", "UserFollowsId");
+
+                    b.HasIndex("UserFollowsId");
+
+                    b.ToTable("UserFollowing");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.UserProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -416,6 +431,9 @@ namespace RealPetApi.Migrations
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -582,6 +600,25 @@ namespace RealPetApi.Migrations
                     b.Navigation("UserProfile");
                 });
 
+            modelBuilder.Entity("RealPetApi.Models.UserFollowing", b =>
+                {
+                    b.HasOne("RealPetApi.Models.UserProfile", "UserFollows")
+                        .WithMany("Followers")
+                        .HasForeignKey("UserFollowsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RealPetApi.Models.UserProfile", "UserProfile")
+                        .WithMany("UserFollowing")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserFollows");
+
+                    b.Navigation("UserProfile");
+                });
+
             modelBuilder.Entity("RealPetApi.Models.UserProfile", b =>
                 {
                     b.HasOne("RealPetApi.Models.Handler", "Handler")
@@ -668,9 +705,13 @@ namespace RealPetApi.Migrations
 
                     b.Navigation("Dogs");
 
+                    b.Navigation("Followers");
+
                     b.Navigation("HandlerSports");
 
                     b.Navigation("Photos");
+
+                    b.Navigation("UserFollowing");
 
                     b.Navigation("Wallposts");
                 });

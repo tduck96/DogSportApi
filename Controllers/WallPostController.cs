@@ -97,12 +97,13 @@ namespace RealPetApi.Controllers
             
         {
             var comments = await _wallPostRepository.GetWallPostComments(wallPostId);
-            
+
 
             var post = new WallPost
             {
                 Id = updatedPost.Id,
                 Body = updatedPost.Body,
+                Date = DateTime.Now,
                 PhotoUrl = updatedPost.PhotoUrl,
                 UserProfileId = userId,
                 Comments = comments
@@ -144,6 +145,7 @@ namespace RealPetApi.Controllers
 
           
             postMap.UserProfile = await _userProfileRespository.GetUser(userId);
+            postMap.Date = DateTime.Now;
 
             await _wallPostRepository.CreateWallPost(postMap);
 

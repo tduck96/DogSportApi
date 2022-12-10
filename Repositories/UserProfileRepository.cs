@@ -169,6 +169,7 @@ namespace RealPetApi.Repositories
                    Bio = result.upp.up.Bio,
                    photoUrl = result.upp.up.PhotoUrl,
                    Location = result.ufp.Name
+                   
                })
                .ToListAsync();
               

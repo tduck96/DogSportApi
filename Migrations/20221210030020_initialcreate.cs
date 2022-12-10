@@ -4,7 +4,7 @@
 
 namespace RealPetApi.Migrations
 {
-    public partial class Initital : Migration
+    public partial class initialcreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

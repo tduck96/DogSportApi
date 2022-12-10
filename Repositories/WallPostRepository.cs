@@ -36,26 +36,34 @@ namespace RealPetApi.Repositories
         {
             var wallposts = await _context.UserFollowing
                 .Where(c => c.UserProfileId == userId)
-
+                 
                 .Join(_context.Wallposts,
-                 uf => uf.UserFollowsId,
-                 wp => wp.UserProfileId,
-                (uf, wp) => new { uf, wp })
+                 following => following.UserFollowsId,
+                 wallpost => wallpost.UserProfileId,
+                (following, wallpost) => new { following, wallpost })
 
                  .Join(_context.UserProfiles,
-                ufp => ufp.uf.UserFollowsId,
-                ui => ui.Id,
-                (ufp, ui) => new { ufp, ui })
+                userfollowingpost => userfollowingpost.following.UserFollowsId,
+                userprofile => userprofile.Id,
+                (userfollowingpost, userprofile) => new { userfollowingpost, userprofile })
 
+                 
 
                 .Select(result => new WallPostProfileDto
                 {
-                    Id = result.ufp.wp.Id,
-                    Body = result.ufp.wp.Body,
-                    Name = result.ui.Name,
-                    PhotoUrl = result.ufp.wp.PhotoUrl,
-                    UserPhotoUrl = result.ui.PhotoUrl
+                    Id = result.userfollowingpost.wallpost.Id,
+                    Body = result.userfollowingpost.wallpost.Body,
+                    Name = result.userprofile.Name,
+                    PhotoUrl = result.userfollowingpost.wallpost.PhotoUrl,
+                    UserPhotoUrl = result.userprofile.PhotoUrl,
+                    Date = result.userfollowingpost.wallpost.Date
+
                 })
+
+                 .OrderByDescending(wallpost => wallpost.Date)
+
+
+
                 .ToListAsync();
 
             return wallposts;
@@ -92,9 +100,10 @@ namespace RealPetApi.Repositories
                     Id = wallpost.Id,
                     Body = wallpost.Body,
                     PhotoUrl = wallpost.PhotoUrl,
-                    Comments = commentsToReturn
-
+                    Comments = commentsToReturn,
+                    Date = wallpost.Date.ToString("MM/dd/yyyy hh:mm tt")
                 };
+
                 Dtos.Add(dto);
                 
             }
