@@ -23,7 +23,7 @@ namespace RealPetApi.Interfaces
         Task<bool> FollowUser(UserFollowing user);
         Task<bool> UnfollowUser(int userId, int followId);
         Task<bool> FollowChecker(int userId, int followingId);
-        Task<List<UserProfile>> GetUserFollowing(int userId);
+        Task<IEnumerable<UserListDto>> GetUserFollowing(int userId);
     }
 }
 

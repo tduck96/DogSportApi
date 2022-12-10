@@ -58,35 +58,34 @@ namespace RealPetApi.Repositories
         }
 
 
-        public async Task<List<UserListDto>> GetUsers()
+        public async Task<IEnumerable<UserListDto>> GetUsers()
         {
-           var users = await _context.UserProfiles
-                .Include(c => c.Location)
+            var users = await _context.UserProfiles
+                .Join(_context.Locations,
+                p => p.LocationId,
+                l => l.Id,
+                (p, l) =>
+
+                new UserListDto
+                {
+
+                    Id = p.Id,
+                    Name = p.Name,
+                    Bio = p.Bio,
+                    photoUrl = p.PhotoUrl,
+                    Location = l.Name
+
+                })
+
                 .ToListAsync();
 
-            List<UserListDto> Dtos = new List<UserListDto>();
+            return users;
 
-            foreach(UserProfile user in users)
-            {
-                
-                var dto = new UserListDto
-               {
-                    Id = user.Id,
-                    Bio = user.Bio,
-                    Name = user.Name,
-                    Location = user.Location.Name,
-                    photoUrl = user.PhotoUrl
-                 
-                };
 
-                Dtos.Add(dto);
-            }
-            return Dtos;
-           
+
         }
 
 
-       
 
         public async Task<bool> UpdateUserInfo(UserProfile user)
         {
@@ -150,12 +149,29 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        public async Task<List<UserProfile>> GetUserFollowing(int userId)
+        public async Task<IEnumerable<UserListDto>> GetUserFollowing(int userId)
         {
             var following = await _context.UserFollowing
                .Where(c => c.UserProfileId == userId)
-               .Select(c => c.UserFollows)
+               .Join(_context.UserProfiles,
+               uf => uf.UserFollowsId,
+               up => up.Id,
+               (uf, up) => new { uf, up })
+               .Join(_context.Locations,
+               upp => upp.up.LocationId,
+               ufp => ufp.Id,
+               (upp, ufp) => new { upp, ufp })
+
+               .Select(result => new UserListDto
+               {
+                   Id = result.upp.up.Id,
+                   Name = result.upp.up.Name,
+                   Bio = result.upp.up.Bio,
+                   photoUrl = result.upp.up.PhotoUrl,
+                   Location = result.ufp.Name
+               })
                .ToListAsync();
+              
 
             return following;
 
