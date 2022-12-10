@@ -32,6 +32,44 @@ namespace RealPetApi.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<WallPostProfileDto>> GetFollowerWallposts(int userId)
+        {
+            var wallposts = await _context.UserFollowing
+               .Where(c => c.UserProfileId == userId)
+
+               .Join(_context.Wallposts,
+                following => following.UserFollowsId,
+                wallpost => wallpost.UserProfileId,
+               (following, wallpost) => new { following, wallpost })
+
+                .Join(_context.UserProfiles,
+               userfollowingpost => userfollowingpost.following.UserFollowsId,
+               userprofile => userprofile.Id,
+               (userfollowingpost, userprofile) => new { userfollowingpost, userprofile })
+
+
+
+               .Select(result => new WallPostProfileDto
+               {
+                   Id = result.userfollowingpost.wallpost.Id,
+                   Body = result.userfollowingpost.wallpost.Body,
+                   Name = result.userprofile.Name,
+                   PhotoUrl = result.userfollowingpost.wallpost.PhotoUrl,
+                   UserPhotoUrl = result.userprofile.PhotoUrl,
+                   Date = result.userfollowingpost.wallpost.Date,
+                   UserId = result.userprofile.Id
+
+               })
+
+                .OrderByDescending(wallpost => wallpost.Date)
+
+
+
+               .ToListAsync();
+
+            return wallposts;
+        }
+
         public async Task<WallPost> GetWallPost(int wallpostId)
         {
            return await _context.Wallposts.FirstOrDefaultAsync(w => w.Id == wallpostId);

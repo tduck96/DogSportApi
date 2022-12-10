@@ -91,7 +91,8 @@ namespace RealPetApi.Controllers
                 Body = updatedPost.Body,
                 PhotoUrl = updatedPost.PhotoUrl,
                 UserProfileId = userId,
-                Comments = comments
+                Comments = comments,
+                Date = DateTime.Now
             };
 
 
@@ -130,6 +131,7 @@ namespace RealPetApi.Controllers
 
           
             postMap.UserProfile = await _userProfileRespository.GetUser(userId);
+            postMap.Date = DateTime.Now;
 
             await _wallPostRepository.CreateWallPost(postMap);
 
@@ -137,6 +139,21 @@ namespace RealPetApi.Controllers
 
 
         }
+
+        [HttpGet("following/{userId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<WallPostProfileDto>))]
+
+        public async Task<ActionResult<WallPostProfileDto>> GetFollowingWallposts(int userId)
+        {
+            var wallPosts = await _wallPostRepository.GetFollowerWallposts(userId);
+
+            if (wallPosts == null)
+                return NotFound();
+
+            return Ok(wallPosts);
+        }
+
+
 
         [HttpDelete("{wallpostId}")]
         [ProducesResponseType(400)]

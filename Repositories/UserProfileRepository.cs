@@ -58,35 +58,35 @@ namespace RealPetApi.Repositories
         }
 
 
-        public async Task<List<UserListDto>> GetUsers()
+        public async Task<IEnumerable<UserListDto>> GetUsers()
         {
-           var users = await _context.UserProfiles
-                .Include(c => c.Location)
+            var users = await _context.UserProfiles
+                .Join(_context.Locations,
+                p => p.LocationId,
+                l => l.Id,
+                (p, l) =>
+
+                new UserListDto
+                {
+
+                    Id = p.Id,
+                    Name = p.Name,
+                    Bio = p.Bio,
+                    photoUrl = p.PhotoUrl,
+                    Location = l.Name
+
+                })
+
                 .ToListAsync();
 
-            List<UserListDto> Dtos = new List<UserListDto>();
+            return users;
 
-            foreach(UserProfile user in users)
-            {
-                
-                var dto = new UserListDto
-               {
-                    Id = user.Id,
-                    Bio = user.Bio,
-                    Name = user.Name,
-                    Location = user.Location.Name,
-                    photoUrl = user.PhotoUrl
-                 
-                };
 
-                Dtos.Add(dto);
-            }
-            return Dtos;
-           
+
         }
 
 
-       
+
 
         public async Task<bool> UpdateUserInfo(UserProfile user)
         {

@@ -9,6 +9,7 @@ namespace RealPetApi.Interfaces
         Task<List<WallPostDto>> GetWallPosts();
         Task<WallPost> GetWallPost(int wallpostId);
         Task<ICollection<Comment>> GetWallPostComments(int wallpostId);
+        Task<IEnumerable<WallPostProfileDto>> GetFollowerWallposts(int userId);
         Task<bool> CreateWallPost(WallPost wallPostCreate);
         Task<bool> UpdateWallPost(WallPost wallPostUpdate);
         Task<bool> DeleteWallPost(int wallpostId);

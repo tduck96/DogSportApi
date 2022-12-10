@@ -71,7 +71,8 @@ namespace RealPetApi.Controllers
                 UserProfileId = userProfileId,
                 WallPostId = wallPostID,
                 WallPost = wallpost,
-                UserProfile = user
+                UserProfile = user,
+                Date = DateTime.Now
 
             };
            
@@ -106,7 +107,8 @@ namespace RealPetApi.Controllers
                 UserProfileId = userId,
                 UserProfile = userProfile,
                 WallPostId = wallpostId,
-                WallPost = wallpost
+                WallPost = wallpost,
+                Date = DateTime.Now
             };
 
             var updated = await _commentRepository.UpdateComment(updatedComment);
