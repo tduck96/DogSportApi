@@ -150,12 +150,30 @@ namespace RealPetApi.Repositories
             return true;
         }
 
-        public async Task<List<UserProfile>> GetUserFollowing(int userId)
+        public async Task<IEnumerable<UserListDto>> GetUserFollowing(int userId)
         {
             var following = await _context.UserFollowing
-               .Where(c => c.UserProfileId == userId)
-               .Select(c => c.UserFollows)
-               .ToListAsync();
+                .Where(c => c.UserProfileId == userId)
+                .Join(_context.UserProfiles,
+                uf => uf.UserFollowsId,
+                up => up.Id,
+                (uf, up) => new { uf, up })
+                .Join(_context.Locations,
+                upp => upp.up.LocationId,
+                ufp => ufp.Id,
+                (upp, ufp) => new { upp, ufp })
+
+                .Select(result => new UserListDto
+                {
+                    Id = result.upp.up.Id,
+                    Name = result.upp.up.Name,
+                    Bio = result.upp.up.Bio,
+                    photoUrl = result.upp.up.PhotoUrl,
+                    Location = result.ufp.Name
+
+                })
+                .ToListAsync();
+
 
             return following;
 

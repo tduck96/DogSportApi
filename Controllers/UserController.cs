@@ -243,9 +243,8 @@ namespace RealPetApi.Controllers
 
             else
             {
-                var followMap = _mapper.Map<List<UserListDto>>(result);
 
-                return Ok(followMap);
+                return Ok(result);
             }
         }
 
