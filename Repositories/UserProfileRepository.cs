@@ -22,14 +22,6 @@ namespace RealPetApi.Repositories
         {
             var User = await _context.UserProfiles.AddAsync(user);
 
-            //UserFollowing GoodSportMain = new UserFollowing
-            //{
-            //    UserProfileId = user.Id,
-            //    UserFollowsId = 24
-            //};
-
-            //await _context.UserFollowing.AddAsync(GoodSportMain);
-
             var created = await _context.SaveChangesAsync();
             return created > 0;
         }
