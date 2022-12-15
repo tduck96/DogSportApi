@@ -20,7 +20,7 @@ namespace RealPetApi.Repositories
 
         public async Task<bool> CreateUser(UserProfile user)
         {
-            var User = await _context.UserProfiles.AddAsync(user);
+           await _context.UserProfiles.AddAsync(user);
 
             var created = await _context.SaveChangesAsync();
             return created > 0;
