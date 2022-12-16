@@ -53,18 +53,16 @@ namespace RealPetApi.Controllers
 
             var userMap = _mapper.Map<UserProfile>(user);
 
-            
+            UserFollowing userfollowing = new UserFollowing
+            {
+                UserProfileId = userMap.Id,
+                UserFollowsId = 1
+            };
+
             userMap.Handler = await _handlerRepository.GetHandler(handlerId);
             userMap.Location = await _locationRepository.GetLocation(user.LocationId);
 
-            //UserFollowing userfollowing = new UserFollowing
-            //{
-            //    UserProfileId = userMap.Id,
-            //    UserFollowsId = 24
-            //};
-
             await _userProfileRespository.CreateUser(userMap);
-            //await _userProfileRespository.FollowUser(userfollowing);
 
             return Ok(userMap);
         }

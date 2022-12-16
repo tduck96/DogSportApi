@@ -20,10 +20,23 @@ namespace RealPetApi.Repositories
 
         public async Task<bool> CreateUser(UserProfile user)
         {
-           await _context.UserProfiles.AddAsync(user);
+            await _context.UserProfiles.AddAsync(user);
 
             var created = await _context.SaveChangesAsync();
-            return created > 0;
+
+            UserFollowing userfollowing = new UserFollowing
+            {
+                UserProfileId = user.Id,
+                UserFollowsId = 24
+            };
+
+            if (created > 0)
+            {
+                await FollowUser(userfollowing);
+                return true;
+            }
+           
+            else return false;
         }
 
         public async Task<List<DogDtoForUserProfile>> GetDogsByUser(int userId)
