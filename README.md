@@ -20,10 +20,10 @@ I plan to continue to add new features regularly. I plan to add a messaging feat
 ## Running Application Locally 
 
 To run the web api locally, clone this repository. 
-To get the source code for the React Client , visit https://github.com/tduck96/DogSportClient.
+To get the source code for the React Client , visit https://github.com/tduck96/GoodSportClient
 
 ### Link to client repository 
-https://github.com/tduck96/DogSportClient
+https://github.com/tduck96/GoodSportClient
 
 ### Link to test repository
 https://github.com/tduck96/DogSportTests
