@@ -11,7 +11,7 @@ I had been working building some small projects with C#/.NET, and I was itching 
 
 # What Did I Learn From Developing GoodSport?
 
-I learned a great deal about the quirks of C#. I learned to really enjoy C# as a language. I learned how much I miss the static typing when I jump jump over into JavaScript.  I learned a great deal about some quirks of React hooks. I found myself battling some bugs which forced me to dissect what was going on underneath the hood. For example, the asynchronous nature of the useState hook. I learned a great deal in regards to creating a persistant login. I ran into different types of bugs. I'm not going to go into detail with all of them, but overcoming various issues most definitely led me to become a better developer. 
+I learned a great deal about the quirks of C#. I learned to really enjoy C# as a language. I learned how much I miss the safe typing when I jump over into JavaScript.  I learned a great deal about some quirks of React hooks. I found myself battling some bugs which forced me to dissect what was going on underneath the hood. For example, the asynchronous nature of the useState hook. I learned a great deal in regards to creating a persistant login. I ran into different types of bugs. I'm not going to go into detail with all of them, but overcoming various issues most definitely led me to become a better developer. 
 
 # What's Next With GoodSport?
 
